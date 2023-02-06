@@ -22,6 +22,9 @@ knitr::opts_chunk$set(echo = TRUE)
 # Title
 
 ## Goal of the project:
+Does the planting of trees and the development of areas of green spaces have a positive correlation with the development of air quality indicators in the city of Zurich?
+More specific questions after exploratory analysis.
+
 
 ## Importing all packages and libraries
 
