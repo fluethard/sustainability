@@ -28,6 +28,7 @@ knitr::opts_chunk$set(echo = TRUE)
 The following libraries were used to analyse the data:
 
 ```{r lib, echo=FALSE, include=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
 
 ```
 
