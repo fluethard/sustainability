@@ -1,29 +1,41 @@
 ---
-title: "sustainability_group"
+title: "sustainability_group3 - Trees"
 output: html_document
 date: "2023-02-06"
+author: "Fabian Lüthard, Elisabeth Freimann,Simon Kohler"
+output:
+  html_document:
+    df_print: paged
+    toc: yes
+    theme: united
+    number_sections: yes
+  pdf_document:
+    toc: yes
+  word_document:
+    toc: yes
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+# Title
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+## Goal of the project:
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+## Importing all packages and libraries
 
-```{r cars}
-summary(cars)
+The following libraries were used to analyse the data:
+
+```{r lib, echo=FALSE, include=FALSE, message=FALSE, warning=FALSE}
+
 ```
 
-## Including Plots
+## Loading the data
 
-You can also embed plots, for example:
+```{r pressure, echo=TRUE}
+d.trees <- read.csv('../datasets/gsz.baumkataster_baumstandorte.csv')
+head(d.trees)
+str(d.trees)
 
-```{r pressure, echo=FALSE}
-plot(pressure)
 ```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
