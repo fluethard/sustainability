@@ -2,7 +2,7 @@
 title: "sustainability_group3 - Trees"
 output: html_document
 date: "2023-02-06"
-author: "Fabian Lüthard, Elisabeth Freimann,Simon Kohler"
+author: "Fabian Lüthard, Elisabeth Freimann, Simon Kohler"
 output:
   html_document:
     df_print: paged
@@ -32,14 +32,188 @@ The following libraries were used to analyse the data:
 
 ```{r lib, echo=FALSE, include=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
-
+library(tseries)
+library(astsa)
+library(imputeTS)
+library(forecast)
+library(magrittr)
+library(dplyr)
+library(lubridate)
+library(tidyr)  
+library(ggplot2)
+library(reshape2) 
 ```
 
 ## Loading the data
 
-```{r pressure, echo=TRUE}
+```{r trees, echo=TRUE}
 d.trees <- read.csv('../datasets/gsz.baumkataster_baumstandorte.csv')
 head(d.trees)
 str(d.trees)
 
+```
+
+```{r temp, echo=TRUE}
+filenames.meteo <- list.files(path = "../datasets/meteo/", pattern = "*.csv", full.names = TRUE)
+data_list.meteo <- lapply(filenames.meteo, read.csv)
+# Combine the data frames in the list into a single data frame
+meteo <- do.call(rbind, data_list.meteo)
+
+names(meteo)[1] <- "Date"
+
+meteo <- meteo[meteo$Standort=="Zch_Stampfenbachstrasse",]
+meteo <- meteo %>% 
+  select(c("Date","Parameter","Wert")) %>%
+  pivot_wider(id_cols = "Date",names_from = "Parameter",values_from = "Wert") %>%
+  select(c("Date","T","RainDur","p"))
+
+meteo$Date <- format(as.Date(meteo$Date), format = "%Y-%m-%d")
+meteo$Date <- ymd(meteo$Date)
+
+
+head(meteo)
+```
+
+```{r air, echo=TRUE}
+
+filenames.air <- list.files(path = "../datasets/air/", pattern = "*.csv", full.names = TRUE)
+data_list.air <- lapply(filenames.air, read.csv)
+# Combine the data frames in the list into a single data frame
+air <- do.call(rbind, data_list.air)
+names(air)[1] <- "Date"
+air$Date <- as.Date(format(air$Date), "%Y-%m-%d")
+
+air <- air[air$Standort=="Zch_Stampfenbachstrasse",]
+
+air <- air %>% 
+  select(c("Date", "Parameter", "Wert")) %>%
+  pivot_wider(id_cols = "Date",names_from = "Parameter",values_from = "Wert") 
+
+keep <- c("Date", "CO", "NOx")
+air <- air[keep]
+keep <- c("Date", "CO")
+air.co2 <- air[keep]
+keep <- c("Date", "NOx")
+air.NOx <- air[keep]
+#air.NOx <- air["NOx"] <- log(air["NOx"])
+
+```
+
+
+## Getting an overview about the dataset
+
+```{r plot_air, echo=TRUE}
+
+#melt data frame into long format
+air.plot <- melt(air.co2,  id.vars = "Date")
+#create line plot for each column in data frame
+ggplot(air.plot, aes(Date, value), group = 5) +
+  geom_line(aes(colour = variable))
+
+```
+
+## Timeseries Analysis
+```{r time_meteo, echo=TRUE}
+
+meteo %<>% complete(Date=seq.Date(min(Date), max(Date), by='day'))
+
+# Use the time series class of the library stats
+freq_daily <- 365.2422
+temp <-
+  ts(meteo$T, start=c(year(min(meteo$Date)),yday(min(meteo$Date))),
+     frequency=freq_daily) %>%
+  na_replace(fill=0)
+
+# Stationarity test and decomposition
+adf.test(temp,k=0)
+temp_comp=decompose(temp)
+plot(temp_comp)
+title(sub = "Temperature")
+
+# Manual decomposition
+meteo %<>% mutate(year=year(meteo$Date)+yday(meteo$Date)/freq_daily)
+temp_trend <- lm(meteo$T~meteo$year)
+plot(temp, main="Temperature trend per year")
+abline(temp_trend)
+
+
+# Yearly and monthly data are already prepared
+
+meteo_yr <- meteo %>%
+  mutate(temp_raw=replace_na(T,0)) %>%
+  group_by(Year=year(Date)) %>%
+  filter(Year>=2010 & Year<=2021) %>%
+  summarize(temp=mean(temp_raw)) %>%
+  ungroup()
+
+
+temp_yr <- ts(meteo_yr$temp, start=min(meteo_yr$Year), frequency=1)
+
+```
+
+
+```{r time_air, echo=TRUE}
+
+air %<>% complete(Date=seq.Date(min(Date), max(Date), by='day'))
+
+# Use the time series class of the library stats
+freq_daily <- 365.2422
+co2 <-
+  ts(air$CO, start=c(year(min(air$Date)),yday(min(air$Date))),
+     frequency=freq_daily) %>%
+  na_replace(fill=0)
+NOx <-
+  ts(air$NOx, start=c(year(min(air$Date)), yday(min(air$Date))),
+     frequency=freq_daily) %>%
+  na_replace(fill=0)
+
+# Stationarity test and decomposition
+adf.test(co2,k=0)
+adf.test(NOx,k=0)
+co2_comp=decompose(co2)
+NOx_comp=decompose(NOx)
+plot(co2_comp)
+title(sub = "CO2")
+plot(NOx_comp)
+title(sub = "NOx")
+
+
+# Manual decomposition
+air %<>% mutate(year=year(air$Date)+yday(air$Date)/freq_daily)
+co2_trend <- lm(air$CO~air$year)
+NOx_trend <- lm(air$NOx~air$year)
+plot(co2, main="CO2 trend per year")
+abline(co2_trend)
+plot(NOx, main="NOx trend per year")
+abline(NOx_trend)
+
+air_yr <- air %>%
+  mutate(co2_raw=replace_na(CO,0), NOx_raw=replace_na(NOx,0)) %>%
+  group_by(Year=year(Date)) %>%
+  filter(Year>=2010 & Year<=2021) %>%
+  summarize(co2=sum(co2_raw), NOx=mean(NOx_raw)) %>%
+  ungroup()
+
+# Time series
+co2_yr <- ts(air_yr$co2, start=min(air_yr$Year), frequency=1)
+NOx_yr <- ts(air_yr$NOx, start=min(air_yr$Year), frequency=1)
+
+par(mfrow=c(1,1))
+plot(co2_yr)
+plot(NOx_yr)
+
+# Manual decomposition
+co2_yr_trend <- lm(air_yr$co2~air_yr$Year)
+plot(co2_yr, xlab='Year', ylab='Average co2 pollution')
+abline(co2_yr_trend)
+
+
+plot(co2_yr)
+pacf(co2_yr)
+plot(tbats(co2_yr)) # Why not decompose()?
+plot(residuals(tbats(co2_yr)))
+adf.test(co2_yr)
+
+# Do not use "out of the box" except for exploration
+plot(forecast(co2_yr))
 ```
