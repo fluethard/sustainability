@@ -169,7 +169,7 @@ boxplot(Wert ~ Jahr, data = air.he, subset = Parameter %in% names(table("NOx")),
         main= "NOx at Heubeeribuel per Year [ppb]",
         xlab = "Year", ylab = "ppb")
 boxplot(Wert ~ Jahr, data = air.ro, subset = Parameter %in% names(table("NOx")),
-        main= "NOx at Rostengartenstrasse per Year [ppb]",
+        main= "NOx at Rosengartenstrasse per Year [ppb]",
         xlab = "Year", ylab = "ppb")
 boxplot(Wert ~ Jahr, data = air.sc, subset = Parameter %in% names(table("NOx")),
         main= "NOx at Schimmelstrasse per Year [ppb]",
