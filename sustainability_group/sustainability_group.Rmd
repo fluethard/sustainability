@@ -1,6 +1,5 @@
 ---
 title: "sustainability_group3 - Trees"
-output: html_document
 date: "2023-02-06"
 author: "Fabian Lüthard, Elisabeth Freimann, Simon Kohler"
 output:
