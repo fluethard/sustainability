@@ -37,12 +37,28 @@ More specific questions after exploratory analysis.
 ## Data sources
 
 ### Tree cadastre
-
 Format: csv
 Number of rows: 36'239
 Number of variables: 17 (most important: year of  planting, diameter of crown, 
 district) 
+Last update: 30.01.2023
 Source: https://data.stadt-zuerich.ch/dataset/geo_baumkataster 
+
+### Air quality
+Format: csv
+Number of rows: 1'800 - 11'300 per year
+Number of columns: 7
+Years: 1983 - 2023
+Source: https://data.stadt-zuerich.ch/dataset/ugz_luftschadstoffmessung_stundenwerte
+
+### Meteo data
+Format: csv
+Number of Columns: 7
+Number of rows: 3'000 - 4'700 per year
+Number of variables:
+Years: 1992 - 2023
+Source: https://opendata.swiss/de/dataset/taglich-aktualisierte-meteodaten-seit-1992
+
 
 
 ## Data preparation

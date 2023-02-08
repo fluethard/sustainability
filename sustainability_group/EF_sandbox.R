@@ -185,6 +185,7 @@ boxplot(Wert ~ Jahr, data = air.st, subset = Parameter %in% names(table("NOx")),
 baum <- read.csv("../datasets/gsz.baumkataster_baumstandorte.csv", encoding = "utf-8")
 names(baum)[1] <- "objid" 
 nrow(baum)
+str(baum)
 
 # bar chart pflanzjahr alle
 ggplot(baum, aes(x = pflanzjahr)) +
