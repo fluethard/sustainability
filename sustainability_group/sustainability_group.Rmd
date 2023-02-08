@@ -61,6 +61,48 @@ names(trees)[1] <- "objid"
 #head(trees)
 #str(trees)
 
+
+#Wrangling and mutating tree data
+
+# trees by year
+tree_ts <- d.trees %>%
+  dplyr::select(pflanzjahr) %>%
+  filter(pflanzjahr > 1980) %>%
+  group_by(pflanzjahr) %>%
+  summarise(count = n())
+
+# Trees by district
+tree_quartier <- d.trees %>%
+  dplyr::select(pflanzjahr, objid, quartier) %>%
+  filter(pflanzjahr > 1980) %>%
+  group_by(pflanzjahr, quartier) %>%
+  summarise(count = n())
+
+
+# sum of trees
+tree_ts_sum <- tree_ts %>%
+ mutate(sum_trees = cumsum(count))
+
+
+# Trees by district, year
+tree_quartier_year_full <- d.trees %>%
+  dplyr::select(pflanzjahr, quartier, kronendurchmesser) %>%
+  filter(pflanzjahr > 1980) %>%
+  group_by(pflanzjahr, quartier) %>%
+  summarise(count = n(), sum_crown = sum(kronendurchmesser))
+
+# trees by year
+tree_year <- d.trees %>%
+  dplyr::select(pflanzjahr, kronendurchmesser) %>%
+  filter(pflanzjahr > 1980) %>%
+  group_by(pflanzjahr) %>%
+  summarise(tree_count = n(), crown_sum = sum(kronendurchmesser))
+
+tree_year_sum <- tree_year %>%
+  mutate(cum_trees = cumsum(tree_count)) %>%
+  mutate(cum_crown = cumsum(crown_sum))
+
+
 ```
 
 ```{r temp, echo=TRUE}
