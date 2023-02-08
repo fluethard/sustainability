@@ -22,11 +22,19 @@ tree_quartier <- d.trees %>%
   summarise(count = n())
 
 
+#summarise CO2 by year
 yearly_air <- air %>%
   add_column(year = lubridate::year(air$Datum))
-
 
 yearly_co <- yearly_air %>%
   select(year, CO) %>%
   group_by(year) %>%
   summarise(mean_co = mean(CO, na.rm = T))
+
+# sum of trees
+tree_ts_sum <- tree_ts %>%
+ mutate(sum_trees = cumsum(count))
+
+
+
+
