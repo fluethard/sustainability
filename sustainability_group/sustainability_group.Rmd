@@ -18,11 +18,21 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Title
+# Introduction
 
 ## Goal of the project:
 Does the planting of trees and the development of areas of green spaces have a positive correlation with the development of air quality indicators in the city of Zurich?
 More specific questions after exploratory analysis.
+
+
+
+## Big Picture: Embedding in the Sustainable Development Goals (SDG)
+
+
+## Data sources
+
+
+## Data preparation
 
 
 ## Importing all packages and libraries
@@ -46,9 +56,10 @@ library(reshape2)
 ## Loading the data
 
 ```{r trees, echo=TRUE}
-d.trees <- read.csv('../datasets/gsz.baumkataster_baumstandorte.csv')
-head(d.trees)
-str(d.trees)
+trees <- read.csv('../datasets/gsz.baumkataster_baumstandorte.csv', encoding = "utf-8")
+names(trees)[1] <- "objid" 
+#head(trees)
+#str(trees)
 
 ```
 
@@ -82,6 +93,11 @@ air <- do.call(rbind, data_list.air)
 names(air)[1] <- "Date"
 air$Date <- as.Date(format(air$Date), "%Y-%m-%d")
 
+air.wide <- air %>% 
+  filter(Standort == "Zch_Stampfenbachstrasse") %>%
+  select(c("Date", "Parameter", "Wert")) %>%
+  pivot_wider(id_cols = "Date", names_from = "Parameter", values_from = "Wert")
+
 air <- air[air$Standort=="Zch_Stampfenbachstrasse",]
 
 air <- air %>% 
@@ -99,7 +115,11 @@ air.NOx <- air[keep]
 ```
 
 
-## Getting an overview about the dataset
+
+
+
+
+## Insights into our datasets
 
 ```{r plot_air, echo=TRUE}
 
@@ -110,6 +130,115 @@ ggplot(air.plot, aes(Date, value), group = 5) +
   geom_line(aes(colour = variable))
 
 ```
+
+```{r air.means, echo=TRUE}
+
+air.means = air %>% 
+  filter(!is.na(Wert)) %>% 
+  group_by(Parameter, Jahr) %>%
+  summarize(Mean = round(mean(Wert),2),
+            .groups = "drop")
+
+```
+
+```{r air_mean_line_graphs, echo=TRUE}
+
+plot(subset(air.means, Parameter == "CO", 
+            c(Jahr, Mean)), type = "l",
+     main = "Mean of CO per Year [mg/m3]")  
+
+plot(subset(air.means, Parameter == "NO", 
+            c(Jahr, Mean)), type = "l",
+     main = "Mean of NO per Year [µg/m3]")
+
+plot(subset(air.means, Parameter == "NO2", 
+            c(Jahr, Mean)), type = "l",
+     main = "Mean of NO2 per Year [µg/m3]")
+
+plot(subset(air.means, Parameter == "NOx", 
+            c(Jahr, Mean)), type = "l",
+     main = "Mean of NOx per Year [ppb]")
+
+plot(subset(air.means, Parameter == "O3", 
+            c(Jahr, Mean)), type = "l",
+     main = "Mean of O3 per Year [µg/m3]") 
+
+plot(subset(air.means, Parameter == "O3_max_h1",
+            c(Jahr, Mean)), type = "l",
+     main = "Mean of O3_max_h1 per Year [µg/m3]") 
+
+plot(subset(air.means, Parameter == "O3_nb_h1>120",
+            c(Jahr, Mean)), type = "l",
+     main = "Mean of O3_nb_h1>120 per Year [1]") 
+
+plot(subset(air.means, Parameter == "PM10",
+            c(Jahr, Mean)), type = "l",
+     main = "Mean of PM10 per Year [mg/m3]") 
+
+plot(subset(air.means, Parameter == "PM2.5",
+            c(Jahr, Mean)), type = "l",
+     main = "Mean of PM2.5 per Year [mg/m3]") 
+
+plot(subset(air.means, Parameter == "PN",
+            c(Jahr, Mean)), type = "l",
+     main = "Mean of PN per Year [1/cm3]") 
+
+plot(subset(air.means, Parameter == "SO2",
+            c(Jahr, Mean)), type = "l",
+     main = "Mean of SO2 per Year [µg/m3]")
+
+```
+
+```{r air.boxplots, echo=TRUE}
+
+# Boxplots for CO all over Zürich
+boxplot(Wert ~ Jahr, data = air, subset = Parameter %in% names(table("CO")),
+        main= "CO in Zürich (Stampfenbachstrasse) per Year [mg/m3]",
+        xlab = "Year", ylab = "mg/m3")
+boxplot(Wert ~ Jahr, data = air, subset = Parameter %in% names(table("NOx")),
+        main= "NOx in Zürich per Year [ppb]",
+        xlab = "Year", ylab = "ppb")
+
+# Boxplots for NOx per monitoring station
+air.he <- air %>% filter(Standort == "Zch_HeubeeribÃ¼el")
+air.ro <- air %>% filter(Standort == "Zch_Rosengartenstrasse")
+air.sc <- air %>% filter(Standort == "Zch_Schimmelstrasse")
+air.st <- air %>% filter(Standort == "Zch_Stampfenbachstrasse")
+
+boxplot(Wert ~ Jahr, data = air.he, subset = Parameter %in% names(table("NOx")),
+        main= "NOx at Heubeeribuel per Year [ppb]",
+        xlab = "Year", ylab = "ppb")
+boxplot(Wert ~ Jahr, data = air.ro, subset = Parameter %in% names(table("NOx")),
+        main= "NOx at Rosengartenstrasse per Year [ppb]",
+        xlab = "Year", ylab = "ppb")
+boxplot(Wert ~ Jahr, data = air.sc, subset = Parameter %in% names(table("NOx")),
+        main= "NOx at Schimmelstrasse per Year [ppb]",
+        xlab = "Year", ylab = "ppb")
+boxplot(Wert ~ Jahr, data = air.st, subset = Parameter %in% names(table("NOx")),
+        main= "NOx at Stampfenbachstrasse per Year [ppb]",
+        xlab = "Year", ylab = "ppb")
+
+```
+
+```{r tree_pflanzjahr, echo=TRUE}
+
+# bar chart pflanzjahr alle
+ggplot(trees, aes(x = pflanzjahr)) +
+  geom_bar() +
+  labs(title="Trees per year planted")
+# bar chart nur neuere pflanzjahre
+ggplot(trees[trees$pflanzjahr > 1949, ], aes(x = pflanzjahr)) +
+  geom_bar() +
+  labs(title="Trees planted as of 1950")
+
+# bar chart kronendurchmesser
+ggplot(trees, aes(x = kronendurchmesser)) +
+  geom_bar() +
+  labs(title="Number of trees per crown diameter")
+
+```
+
+# Analysis
 
 ## Timeseries Analysis
 ```{r time_meteo, echo=TRUE}
@@ -216,3 +345,12 @@ adf.test(co2_yr)
 # Do not use "out of the box" except for exploration
 plot(forecast(co2_yr))
 ```
+
+
+# Conclusions and findings
+
+
+# Outlook and next steps
+
+
+
