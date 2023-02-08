@@ -18,7 +18,12 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Introduction
+# TREES  -  TREES  -  TREES
+
+## Introduction
+
+
+
 
 ## Goal of the project:
 Does the planting of trees and the development of areas of green spaces have a positive correlation with the development of air quality indicators in the city of Zurich?
@@ -30,6 +35,14 @@ More specific questions after exploratory analysis.
 
 
 ## Data sources
+
+### Tree cadastre
+
+Format: csv
+Number of rows: 36'239
+Number of variables: 17 (most important: year of  planting, diameter of crown, 
+district) 
+Source: https://data.stadt-zuerich.ch/dataset/geo_baumkataster 
 
 
 ## Data preparation
