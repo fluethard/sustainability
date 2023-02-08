@@ -56,7 +56,7 @@ library(reshape2)
 ## Loading the data
 
 ```{r trees, echo=TRUE}
-trees <- read.csv('../datasets/gsz.baumkataster_baumstandorte.csv', encoding = "utf-8")
+trees <- read.csv('../datasets/gsz.baumkataster_baumstandorte.csv', encoding = "UTF-8")
 names(trees)[1] <- "objid" 
 #head(trees)
 #str(trees)
@@ -92,24 +92,27 @@ data_list.air <- lapply(filenames.air, read.csv)
 air <- do.call(rbind, data_list.air)
 names(air)[1] <- "Date"
 air$Date <- as.Date(format(air$Date), "%Y-%m-%d")
+# add column Jahr
+air$Jahr <- as.numeric(format(air$Date,'%Y'))
+head(air)
 
 air.wide <- air %>% 
   filter(Standort == "Zch_Stampfenbachstrasse") %>%
   select(c("Date", "Parameter", "Wert")) %>%
   pivot_wider(id_cols = "Date", names_from = "Parameter", values_from = "Wert")
 
-air <- air[air$Standort=="Zch_Stampfenbachstrasse",]
+air.short <- air[air$Standort=="Zch_Stampfenbachstrasse",]
 
-air <- air %>% 
+air.short <- air.short %>%
   select(c("Date", "Parameter", "Wert")) %>%
-  pivot_wider(id_cols = "Date",names_from = "Parameter",values_from = "Wert") 
+  pivot_wider(id_cols = "Date",names_from = "Parameter",values_from = "Wert")
 
 keep <- c("Date", "CO", "NOx")
-air <- air[keep]
+air.short <- air.short[keep]
 keep <- c("Date", "CO")
-air.co2 <- air[keep]
+air.co2 <- air.short[keep]
 keep <- c("Date", "NOx")
-air.NOx <- air[keep]
+air.NOx <- air.short[keep]
 #air.NOx <- air["NOx"] <- log(air["NOx"])
 
 ```
@@ -282,7 +285,7 @@ temp_yr <- ts(meteo_yr$temp, start=min(meteo_yr$Year), frequency=1)
 
 ```{r time_air, echo=TRUE}
 
-air %<>% complete(Date=seq.Date(min(Date), max(Date), by='day'))
+air.short %<>% complete(Date=seq.Date(min(Date), max(Date), by='day'))
 
 # Use the time series class of the library stats
 freq_daily <- 365.2422
