@@ -51,12 +51,13 @@ library(lubridate)
 library(tidyr)  
 library(ggplot2)
 library(reshape2) 
+
 ```
 
 ## Loading the data
 
 ```{r trees, echo=TRUE}
-trees <- read.csv('../datasets/gsz.baumkataster_baumstandorte.csv', encoding = "UTF-8")
+d.trees <- read.csv('../datasets/gsz.baumkataster_baumstandorte.csv', encoding = "UTF-8")
 names(trees)[1] <- "objid" 
 #head(trees)
 #str(trees)
@@ -332,11 +333,11 @@ air.short %<>% complete(Date=seq.Date(min(Date), max(Date), by='day'))
 # Use the time series class of the library stats
 freq_daily <- 365.2422
 co2 <-
-  ts(air$CO, start=c(year(min(air$Date)),yday(min(air$Date))),
+  ts(air.short$CO, start=c(year(min(air.short$Date)),yday(min(air.short$Date))),
      frequency=freq_daily) %>%
   na_replace(fill=0)
 NOx <-
-  ts(air$NOx, start=c(year(min(air$Date)), yday(min(air$Date))),
+  ts(air.short$NOx, start=c(year(min(air.short$Date)), yday(min(air.short$Date))),
      frequency=freq_daily) %>%
   na_replace(fill=0)
 
@@ -352,15 +353,15 @@ title(sub = "NOx")
 
 
 # Manual decomposition
-air %<>% mutate(year=year(air$Date)+yday(air$Date)/freq_daily)
-co2_trend <- lm(air$CO~air$year)
-NOx_trend <- lm(air$NOx~air$year)
+air.short %<>% mutate(year=year(air.short$Date)+yday(air.short$Date)/freq_daily)
+co2_trend <- lm(air.short$CO~air.short$year)
+NOx_trend <- lm(air.short$NOx~air.short$year)
 plot(co2, main="CO2 trend per year")
 abline(co2_trend)
 plot(NOx, main="NOx trend per year")
 abline(NOx_trend)
 
-air_yr <- air %>%
+air_yr <- air.short %>%
   mutate(co2_raw=replace_na(CO,0), NOx_raw=replace_na(NOx,0)) %>%
   group_by(Year=year(Date)) %>%
   filter(Year>=2010 & Year<=2021) %>%
@@ -391,6 +392,29 @@ adf.test(co2_yr)
 plot(forecast(co2_yr))
 ```
 
+```{r correlation, echo=TRUE}
+
+# Make the time series comparable
+temp_comp_random <- data.frame(Date=time(temp_comp$random), Random=temp_comp$random)
+co2_comp_random <- data.frame(Date=time(co2_comp$random), Random=co2_comp$random)
+NOx_comp_random <- data.frame(Date=time(NOx_comp$random), Random=NOx_comp$random)
+
+window <- list(start=2010,end=2021)
+
+temp_comp_random %<>% filter(Date>=window$start&Date<window$end)
+co2_comp_random %<>% filter(Date>=window$start&Date<window$end)
+NOx_comp_random %<>% filter(Date>=window$start&Date<window$end)
+
+temp_comp_random_ts <- ts(temp_comp_random$Random, start=c(window$start,1), frequency=freq_daily)
+co2_comp_random_ts <- ts(co2_comp_random$Random, start=c(window$start,1), frequency=freq_daily)
+NOx_comp_random_ts <- ts(NOx_comp_random$Random, start=c(window$start,1), frequency=freq_daily)
+
+
+# Cross correlation function
+# ccf(temp_comp_random_ts,co2_comp_random_ts)
+ccf(temp_comp_random_ts,co2_comp_random_ts, na.action = na.pass)
+
+```
 
 # Conclusions and findings
 
