@@ -21,51 +21,44 @@ knitr::opts_chunk$set(echo = TRUE)
 # TREES  -  TREES  -  TREES
 
 ## Introduction
-
-
+Sustainability offers a variety of challenges and opportunities in regard to data science. More and more data is available from around the global in regards to sustainability and each regions has its on challenges with sustainability. However, for this project we will focus on a problem that is more local to us. We are going to analyse the impact trees have on our everyday lives in regards to temperature and air quality.
 
 
 ## Goal of the project:
-Does the planting of trees and the development of areas of green spaces have a positive correlation with the development of air quality indicators in the city of Zurich?
-More specific questions after exploratory analysis.
-
+We would like to prove that the planting of trees and the development of green spaces in an urban environment have positive correlations with the development of air quality indicators and a negative impact on temperatures in the city of Zurich. This project will try to pinpoint the effect trees have on these indicators. The results will be presented in a way to inform politicians, urban developers as well as the public about the impact that a more green city could have on our everyday lives. 
+While there are a number of potential factors, both local and national/global, can have a significant impact on the climate and for this research we are choosing to focus on data from Zürich in regards to air quality, temperature information and the tree inventory. Further factors are described using sources, but are not included in the data analysis.
 
 
 ## Big Picture: Embedding in the Sustainable Development Goals (SDG)
+The SDGs lay out the goals that the global community has agreed on. Total there are 17 goals and they range from 1. No poverty to 17. Partnerships for the goals and include social, economic and environmental targets. For the research we have identified the relevant goals and put them into the three different categories: Risk, Opportunity and Intended. 
+![Sustainable Development Goals](../images/sdg.png)
+As can be seen the intended target for our research is to help achieve the goal number 3. Good health and well being. This can be achieved if we can prove a correlation between the amount of trees in a region and an improvement in air quality, which could then lead to increase of planting of new trees in Zürich as well as a reduction of concrete wastelands in favor of green spaces. There are a number opportunities as well in regards to climate action, economic growth and affordable and clean energy. The are only limited risks that this project has. However it is imaginable that the improvement in air quality in certain areas could lead to a increase in inequalities between the rich and poor. It is also important to always be responsible and think of possible unintended consequences while planning for new green zones and planting new trees.
 
 
 ## Data sources
+For the research there are three different data sets needed: Air quality information, temperature data, and a tree cadastre. All of these three data sets are publicly available. Following is a quick overview over the different data sets:
+
+### Air quality
+Format: csv
+Number of rows: 283'763
+Number of variables: 8 (most important: date, location, type of measurement, value) 
+Source: https://data.stadt-zuerich.ch/dataset/ugz_luftschadstoffmessung_stundenwerte 
+
+### Meteo
+Format: csv
+Number of rows: 4'747
+Number of variables: 17 (most important: date, temperature, location) 
+Source: https://opendata.swiss/de/dataset/taglich-aktualisierte-meteodaten-seit-1992 
 
 ### Tree cadastre
 Format: csv
 Number of rows: 36'239
 Number of variables: 17 (most important: year of  planting, diameter of crown, 
 district) 
-Last update: 30.01.2023
 Source: https://data.stadt-zuerich.ch/dataset/geo_baumkataster 
-
-### Air quality
-Format: csv
-Number of rows: 1'800 - 11'300 per year
-Number of columns: 7
-Years: 1983 - 2023
-Source: https://data.stadt-zuerich.ch/dataset/ugz_luftschadstoffmessung_stundenwerte
-
-### Meteo data
-Format: csv
-Number of Columns: 7
-Number of rows: 3'000 - 4'700 per year
-Number of variables:
-Years: 1992 - 2023
-Source: https://opendata.swiss/de/dataset/taglich-aktualisierte-meteodaten-seit-1992
-
-
-
-## Data preparation
 
 
 ## Importing all packages and libraries
-
 The following libraries were used to analyse the data:
 
 ```{r lib, echo=FALSE, include=FALSE, message=FALSE, warning=FALSE}
@@ -83,8 +76,10 @@ library(reshape2)
 
 ```
 
-## Loading the data
+## Data preparation
+In this step we collected the three data sets and prepared them so that they are for use in the analysis. To achieve this, certain changes to the data were necessary to facilitate an informative analysis. 
 
+First we loaded the tree cadastre data and wrangled the data to get additional information such as the amount of trees per year and the number of trees by district.
 ```{r trees, echo=TRUE}
 d.trees <- read.csv('../datasets/gsz.baumkataster_baumstandorte.csv', encoding = "UTF-8")
 names(d.trees)[1] <- "objid" 
@@ -135,6 +130,7 @@ tree_year_sum <- tree_year %>%
 
 ```
 
+Next we load all the temperature information from the meteo data set. While this data set includes other information such as rain duration we will only use the temperature, as it seems unlikely that the amount of trees significantly impact the rain fall in an area. 
 ```{r temp, echo=TRUE}
 filenames.meteo <- list.files(path = "../datasets/meteo/", pattern = "*.csv", full.names = TRUE)
 data_list.meteo <- lapply(filenames.meteo, read.csv)
@@ -156,6 +152,7 @@ meteo$Date <- ymd(meteo$Date)
 head(meteo)
 ```
 
+Lastly the air quality data is loaded. While there are multiple location were air quality was measured not every station measured each variable. They also were not all built at the same time. 
 ```{r air, echo=TRUE}
 
 filenames.air <- list.files(path = "../datasets/air/", pattern = "*.csv", full.names = TRUE)
@@ -190,12 +187,8 @@ air.NOx <- air.short[keep]
 ```
 
 
-
-
-
-
 ## Insights into our datasets
-
+To gain insights from the available information we have created a number of graphics. These already show preliminary results of our project.
 ```{r plot_air, echo=TRUE}
 
 #melt data frame into long format
@@ -263,6 +256,8 @@ plot(subset(air.means, Parameter == "SO2",
      main = "Mean of SO2 per Year [µg/m3]")
 
 ```
+One can see that the both the "NOx" and the "CO" graph show that the air quality has improved significantly since 1980. It is unlikely to say the least that trees are the only factor in this improvement. More likely other factors such as new laws and regulations in regards to catalysts of cars are more likely the major factor.
+
 
 ```{r air.boxplots, echo=TRUE}
 
@@ -312,11 +307,15 @@ ggplot(d.trees, aes(x = kronendurchmesser)) +
   labs(title="Number of trees per crown diameter")
 
 ```
+As one can see there is a trend to planting more trees in Zürich. However, there are also quite a few outliers visible in the graph. These outliers can usually be explained quite easily with replanting efforts. For example in 2000 a larger number of trees than normal were planted as replacements for all the trees that were blown down or had to be cut down because of cyclone Lothar in December of 1999.
 
-# Analysis
+## Analysis
+Having gained an overview of the data, we would now like to analyse the data in more detail using a few different methodologies.
 
-## Timeseries Analysis
+### Timeseries Analysis
+In this section we are trying to see if there is a correlation over time between the amount of trees and the air quality or temperature. For this we use timeseries analysis, meaning we need to convert our data into timeseries objects. After transforming them we can then look at the decomposition of the objects. Thus we are able to see trends, seasonality and residuals. However the seasonality is only visible for air pollution and temperature, as the tree information is only available on a yearly basis. 
 ```{r time_meteo, echo=TRUE}
+par(mfrow=c(2,1))
 
 meteo %<>% complete(Date=seq.Date(min(Date), max(Date), by='day'))
 
@@ -328,7 +327,7 @@ temp <-
   na_replace(fill=0)
 
 # Stationarity test and decomposition
-adf.test(temp,k=0)
+# adf.test(temp,k=0)
 temp_comp=decompose(temp)
 plot(temp_comp)
 title(sub = "Temperature")
@@ -339,13 +338,12 @@ temp_trend <- lm(meteo$T~meteo$year)
 plot(temp, main="Temperature trend per year")
 abline(temp_trend)
 
-
-# Yearly and monthly data are already prepared
+# Prepare yearly data
 
 meteo_yr <- meteo %>%
   mutate(temp_raw=replace_na(T,0)) %>%
   group_by(Year=year(Date)) %>%
-  filter(Year>=2010 & Year<=2021) %>%
+  filter(Year>=1980 & Year<=2021) %>%
   summarize(temp=mean(temp_raw)) %>%
   ungroup()
 
@@ -353,7 +351,7 @@ meteo_yr <- meteo %>%
 temp_yr <- ts(meteo_yr$temp, start=min(meteo_yr$Year), frequency=1)
 
 ```
-
+Generally we can see that the temperature is slightly rising over time. There is a slight upwards trend noticeable and it is also important to remember how much danger a temperature increase of just one percent can be for the biodiversity. 
 
 ```{r time_air, echo=TRUE}
 
@@ -371,29 +369,29 @@ NOx <-
   na_replace(fill=0)
 
 # Stationarity test and decomposition
-adf.test(co,k=0)
-adf.test(NOx,k=0)
+# adf.test(co,k=0)
+# adf.test(NOx,k=0)
 co_comp=decompose(co)
 NOx_comp=decompose(NOx)
-plot(co_comp)
-title(sub = "CO")
-plot(NOx_comp)
-title(sub = "NOx")
+# plot(co_comp)
+# title(sub = "CO")
+# plot(NOx_comp)
+# title(sub = "NOx")
 
 
 # Manual decomposition
 air.short %<>% mutate(year=year(air.short$Date)+yday(air.short$Date)/freq_daily)
 co_trend <- lm(air.short$CO~air.short$year)
 NOx_trend <- lm(air.short$NOx~air.short$year)
-plot(co, main="CO trend per year")
-abline(co_trend)
-plot(NOx, main="NOx trend per year")
-abline(NOx_trend)
+# plot(co, main="CO trend per year")
+# abline(co_trend)
+# plot(NOx, main="NOx trend per year")
+# abline(NOx_trend)
 
 air_yr <- air.short %>%
   mutate(co_raw=replace_na(CO,0), NOx_raw=replace_na(NOx,0)) %>%
   group_by(Year=year(Date)) %>%
-  filter(Year>=2010 & Year<=2021) %>%
+  filter(Year>=1980 & Year<=2021) %>%
   summarize(co=sum(co_raw), NOx=mean(NOx_raw)) %>%
   ungroup()
 
@@ -401,25 +399,36 @@ air_yr <- air.short %>%
 co_yr <- ts(air_yr$co, start=min(air_yr$Year), frequency=1)
 NOx_yr <- ts(air_yr$NOx, start=min(air_yr$Year), frequency=1)
 
-par(mfrow=c(1,1))
-plot(co_yr)
-plot(NOx_yr)
+# plot(co_yr)
+# plot(NOx_yr)
 
 # Manual decomposition
 co_yr_trend <- lm(air_yr$co~air_yr$Year)
 plot(co_yr, xlab='Year', ylab='Average co pollution')
 abline(co_yr_trend)
+title(main = "CO development over the years and trend line")
+NOx_yr_trend <- lm(air_yr$NOx~air_yr$Year)
+plot(NOx_yr, xlab='Year', ylab='Average NOx pollution')
+abline(NOx_yr_trend)
+title(main = "NOx development over the years and trend line")
 
 
-plot(co_yr)
-pacf(co_yr)
-plot(tbats(co_yr)) # Why not decompose()?
+# plot(co_yr)
+# pacf(co_yr)
+# plot(tbats(co_yr))
+# title(sub = "CO ")
+
 plot(residuals(tbats(co_yr)))
-adf.test(co_yr)
+title(main = "Residuals of CO")
+plot(residuals(tbats(NOx_yr)))
+title(main = "Residuals of NOx")
 
-# Do not use "out of the box" except for exploration
-plot(forecast(co_yr))
+# adf.test(co_yr)
+
+# "Forecast"
+# plot(forecast(co_yr))
 ```
+The timeseries analysis of Carbon monoxide (co) and Nitrogen oxide (NOx) show that the they are closely correlated. It is further clear that they have both decreased drastically since the 1980 in Zürich. It is unlikely that the whole change can be attributed to the growing number of trees and green spaces in Zürich. It is more likely that a variety of factors including advancement in technologies and changes in laws and regulations contributed as well to the improvement in air quality.
 
 ```{r correlation, echo=TRUE}
 
@@ -446,11 +455,11 @@ NOx_comp_random_ts <- ts(NOx_comp_random$Random, start=c(window$start,1), freque
 # Cross correlation function
 # ccf(temp_comp_random_ts,co_comp_random_ts)
 
-ccf(temp_comp_random_ts, co_comp_random_ts, 
-    lag.max = 300,
-    main = "Temp - CO Cross-Correlation Plot",
-    ylab = "CCF", 
-    na.action = na.pass)
+# ccf(temp_comp_random_ts, co_comp_random_ts, 
+#     lag.max = 300,
+#     main = "Temp - CO Cross-Correlation Plot",
+#     ylab = "CCF", 
+#     na.action = na.pass)
 ccf(tree_ts$count, air_yr$NOx, 
     lag.max = 300,
     main = "Trees - NOx Cross-Correlation Plot",
@@ -465,10 +474,10 @@ ccf(tree_ts$count, meteo_yr$temp,
     ylab = "CCF")
 ```
 
-# Conclusions and findings
+## Conclusions and findings
 
 
-# Outlook and next steps
+## Outlook and next steps
 
 
 
