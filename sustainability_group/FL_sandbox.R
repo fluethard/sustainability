@@ -70,7 +70,7 @@ tree_year_quartier <- d.trees %>%
   dplyr::select(pflanzjahr, quartier, kronendurchmesser) %>%
   filter(pflanzjahr > 1980) %>%
   group_by(pflanzjahr, quartier) %>%
-  summarise(tree_count = n(), crown_sum = sum(kronendurchmesser))
+  summarise(tree_count = n(), crown_sum = sum(kronendurchmesser), total_sum = cumsum(tree_count))
 
 tree_year_quartier_sum <- tree_year_quartier %>%
   mutate(cum_trees = cumsum(tree_count)) %>%
@@ -78,7 +78,7 @@ tree_year_quartier_sum <- tree_year_quartier %>%
 
 
 
-merged_temp <- read_csv("datasets/merged_temp.csv")
+merged_temp <- read_csv("/Users/fluethard/hslu/sustainability/git/sustainability/datasets/merged_temp.csv")
 
 names(merged_temp)[1] <- "date"
 names(merged_temp)[2] <- "station"
@@ -94,6 +94,40 @@ year_temp_stampfenbach <- merged_temp %>%
   dplyr::select(year, temperature) %>%
   group_by(year) %>%
   summarise(mean_temp = mean(temperature, na.rm = T))
+
+
+year_temp_by_station <- merged_temp %>%
+  add_column(year = lubridate::year(merged_temp$date)) %>%
+  filter(measurement == "T") %>%
+  dplyr::select(year, station, temperature) %>%
+  group_by(year, station) %>%
+  summarise(mean_temp = mean(temperature, na.rm = T))
+
+
+temp_station <- merged_temp %>%
+  add_column(year = lubridate::year(merged_temp$date)) %>%
+  filter(measurement == "T_max_h1") %>%
+  filter(year == '2022') %>%
+  dplyr::select(year, station, temperature)
+
+write_csv(temp_station, 'temp_station_for_tableau.csv')
+
+write_csv(tree_year_quartier, 'tree_year_quartier_for_tableau.csv')
+
+
+temp_by_station_2022 <- merged_temp %>%
+  add_column(year = lubridate::year(merged_temp$date)) %>%
+  add_column(quartier = case_when(merged_temp$station == 'Zch_Stampfenbachstrasse' ~ 'Rathaus', merged_temp$station == 'Zch_Rosengartenstrasse' ~ 'Wipkingen', merged_temp$station == 'Zch_Schimmelstrasse' ~ 'Sihlfeld')) %>%
+  filter(measurement == "T_max_h1") %>%
+  filter(year == '2022') %>%
+  dplyr::select(date, station, quartier, temperature)
+
+  write_csv(temp_by_station_2022, 'temp_station_for_tableau_2022.csv')
+
+
+  
+  
+  
 
 
   
