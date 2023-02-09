@@ -26,10 +26,10 @@ tree_quartier <- d.trees %>%
 yearly_air <- air %>%
   add_column(year = lubridate::year(air$Datum))
 
-yearly_co <- yearly_air %>%
-  dplyr::select(year, CO) %>%
+yearly_aq <- yearly_air %>%
+  #dplyr::select(year, CO) %>%
   group_by(year) %>%
-  summarise(mean_co = mean(CO, na.rm = T))
+  summarise(mean_co = mean(CO, na.rm = T), mean_no2 = mean(NO2, na.rm = T), mean_no = mean(NO, na.rm = T), mean_nox = mean(NOx, na.rm = T), mean_so2 = mean(SO2, na.rm = T))
 
 # sum of trees
 tree_ts_sum <- tree_ts %>%
@@ -75,5 +75,29 @@ tree_year_quartier <- d.trees %>%
 tree_year_quartier_sum <- tree_year_quartier %>%
   mutate(cum_trees = cumsum(tree_count)) %>%
   mutate(cum_crown = cumsum(crown_sum))
+
+
+
+merged_temp <- read_csv("datasets/merged_temp.csv")
+
+names(merged_temp)[1] <- "date"
+names(merged_temp)[2] <- "station"
+names(merged_temp)[3] <- "measurement"
+names(merged_temp)[4] <- "date_unit"
+names(merged_temp)[5] <- "unit"
+names(merged_temp)[6] <- "temperature"
+
+
+year_temp_stampfenbach <- merged_temp %>%
+  add_column(year = lubridate::year(merged_temp$date)) %>%
+  filter(station == "Zch_Stampfenbachstrasse", measurement == "T") %>%
+  dplyr::select(year, temperature) %>%
+  group_by(year) %>%
+  summarise(mean_temp = mean(temperature, na.rm = T))
+
+
+  
+  
+
 
 
