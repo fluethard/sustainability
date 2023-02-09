@@ -3,20 +3,20 @@ library(ggplot2)    # ggplot
 library(reshape2) 
 
 air_co <- air %>%
-  select(Datum, CO)
+  dplyr::select(Datum, CO)
 
 plot(air_co)
 
 # trees by year
 tree_ts <- d.trees %>%
-  select(pflanzjahr, objid) %>%
+  dplyr::select(pflanzjahr) %>%
   filter(pflanzjahr > 1980) %>%
   group_by(pflanzjahr) %>%
   summarise(count = n())
 
 # Trees by district
 tree_quartier <- d.trees %>%
-  select(pflanzjahr, objid, quartier) %>%
+  dplyr::select(pflanzjahr, objid, quartier) %>%
   filter(pflanzjahr > 1980) %>%
   group_by(pflanzjahr, quartier) %>%
   summarise(count = n())
@@ -27,7 +27,7 @@ yearly_air <- air %>%
   add_column(year = lubridate::year(air$Datum))
 
 yearly_co <- yearly_air %>%
-  select(year, CO) %>%
+  dplyr::select(year, CO) %>%
   group_by(year) %>%
   summarise(mean_co = mean(CO, na.rm = T))
 
@@ -36,5 +36,44 @@ tree_ts_sum <- tree_ts %>%
  mutate(sum_trees = cumsum(count))
 
 
+# Trees by district, year
+tree_quartier_year_full <- d.trees %>%
+  dplyr::select(pflanzjahr, quartier, kronendurchmesser) %>%
+  filter(pflanzjahr > 1980) %>%
+  group_by(pflanzjahr, quartier) %>%
+  summarise(count = n(), sum_crown = sum(kronendurchmesser))
+
+# trees by year
+tree_year <- d.trees %>%
+  dplyr::select(pflanzjahr, kronendurchmesser) %>%
+  filter(pflanzjahr > 1980) %>%
+  group_by(pflanzjahr) %>%
+  summarise(tree_count = n(), crown_sum = sum(kronendurchmesser))
+
+tree_year_sum <- tree_year %>%
+  mutate(cum_trees = cumsum(tree_count)) %>%
+  mutate(cum_crown = cumsum(crown_sum))
+
+
+plot(tree_ts)
+
+# TO DO
+# Stitch Trees + Air + Temp
+# Lora Sensor Data
+# Tableau
+
+tree_year_sum %>%
+  ggplot(mapping = aes(x = pflanzjahr, y = cum_crown)) + geom_line()
+
+
+tree_year_quartier <- d.trees %>%
+  dplyr::select(pflanzjahr, quartier, kronendurchmesser) %>%
+  filter(pflanzjahr > 1980) %>%
+  group_by(pflanzjahr, quartier) %>%
+  summarise(tree_count = n(), crown_sum = sum(kronendurchmesser))
+
+tree_year_quartier_sum <- tree_year_quartier %>%
+  mutate(cum_trees = cumsum(tree_count)) %>%
+  mutate(cum_crown = cumsum(crown_sum))
 
 
