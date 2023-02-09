@@ -4,29 +4,64 @@ library(tidyr)      # %>%
 library(dplyr)      # select, filter
 library(ggplot2)    # ggplot
 library(reshape2)   # melt
+library(lubridate)  # year
 
 
 # load meteo data within the folder into the same dataframe 
 #------------------------------------------------------------------------------#
 # source: https://chat.openai.com/chat :-)
 
-# !!!!   set working directory to source file location    !!!!
+# # !!!!   set working directory to source file location    !!!!
+# filenames.meteo <- list.files(path = "../datasets/meteo/", pattern = "*.csv", full.names = TRUE)
+# data_list.meteo <- lapply(filenames.meteo, read.csv)
+# # Combine the data frames in the list into a single data frame
+# meteo <- do.call(rbind, data_list.meteo)
+# 
+# names(meteo)[1] <- "Datum"                                # Elisabeth needs this
+# 
+# meteo <- meteo[meteo$Standort=="Zch_Stampfenbachstrasse",]
+# meteo <- meteo %>% 
+#   select(c("Datum","Parameter","Wert")) %>%
+#   pivot_wider(id_cols = "Datum",names_from = "Parameter",values_from = "Wert") %>%
+#   select(c("Datum","T","RainDur","p"))
+# 
+# meteo$Datum <- format(as.Date(meteo$Datum), format = "%Y-%m-%d")
+# colnames(meteo) <-c("Datum","Temperatur", "RegenDauer", "Luftdruck")
+# plot(meteo$Temperatur, type = "l")
+
+
+################################################################################
+# from .Rmd  load meteo  
 filenames.meteo <- list.files(path = "../datasets/meteo/", pattern = "*.csv", full.names = TRUE)
 data_list.meteo <- lapply(filenames.meteo, read.csv)
 # Combine the data frames in the list into a single data frame
 meteo <- do.call(rbind, data_list.meteo)
 
-names(meteo)[1] <- "Datum"                                # Elisabeth needs this
+names(meteo)[1] <- "Date"
+meteo$Date <- format(as.Date(meteo$Date), format = "%Y-%m-%d")
 
+
+# Datensatz mit Temperatur und Globalstrahlung pro Messstation
+meteo.extr <- meteo %>%
+  filter(Parameter == "T" | Parameter == "StrGlo")
+meteo.extr$Jahr <- year(meteo.extr$Date)
+
+
+# weiter mit dem normalen meteo-Datensatz
 meteo <- meteo[meteo$Standort=="Zch_Stampfenbachstrasse",]
 meteo <- meteo %>% 
-  select(c("Datum","Parameter","Wert")) %>%
-  pivot_wider(id_cols = "Datum",names_from = "Parameter",values_from = "Wert") %>%
-  select(c("Datum","T","RainDur","p"))
+  select(c("Date","Parameter","Wert")) %>%
+  pivot_wider(id_cols = "Date",names_from = "Parameter",values_from = "Wert") %>%
+  select(c("Date","T","RainDur","p"))
 
-meteo$Datum <- format(as.Date(meteo$Datum), format = "%Y-%m-%d")
-colnames(meteo) <-c("Datum","Temperatur", "RegenDauer", "Luftdruck")
-plot(meteo$Temperatur, type = "l")
+meteo$Date <- format(as.Date(meteo$Date), format = "%Y-%m-%d")
+meteo$Date <- ymd(meteo$Date)
+
+
+head(meteo)
+
+
+
 
 # load air data within the folder into the same dataframe 
 #------------------------------------------------------------------------------#
@@ -199,21 +234,57 @@ ggplot(baum, aes(x = kronendurchmesser)) +
   geom_bar()
 
 
+# Temperature: max/min over years
+#------------------------------------------------------------------------------#
+# meteo.extr %>%
+#   max(Parameter == "T")
+
+# example
+meteo.minmax <- meteo.extr %>%
+  group_by(Jahr, Parameter, Standort) %>%
+  summarize(Max = max(Wert, na.rm = TRUE), .groups = "drop")
+
+# subset(mydata, age >= 20 | age < 10, select=c(ID, Weight)) 
+
+# meteo.minmax$Parameter <- as.factor(meteo.minmax$Parameter)
+# meteo.minmax$Standort <- as.factor(meteo.minmax$Standort)
+ 
+
+############# bis da...
+
+ 
+meteo.minmax.str <- meteo.minmax %>% filter(Parameter == "StrGlo")
+meteo.minmax.tem <- meteo.minmax %>% filter(Parameter == "T")
+
+#plot(meteo.minmax.str$Jahr, meteo.minmax.str$Max,  type = "l")
+#plot("Jahr", "Max", data = meteo.minmax.str, type = "l")
+
+ggplot(meteo.minmax.str, aes(x = Jahr, y = Max)) +
+  geom_line()
+
+ggplot(meteo.minmax.tem, aes(x = Jahr, y = Max)) +
+  geom_line(aes(color = Standort, linetype = Standort))
+
+
+#  subset(meteo.minmax$Parameter meteo.minmax.str= "T")  %>% 
+#      ggplot(aes(x = "Jahr", y = Wert, colour = Standort, group = Standort)) +
+#  geom_line()
+
+
+plot_data_lines %>%
+  filter(City %in% c("Lima", "Bogota","Cali")) %>%
+  ggplot(aes(x = as.numeric(Year), y = value, color = City)) +
+  geom_line() + 
+  labs(x = "Year")
 
 
 
 
 
 
+ggplot(df, aes(x = x, y = value, color = variable)) +
+  geom_line()
 
+sapply(meteo.minmax, class)
 
-
-
-
-
-
-
-
-
-
-
+plot(meteo.minmax$Max)
