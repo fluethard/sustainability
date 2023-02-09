@@ -411,22 +411,42 @@ plot(forecast(co_yr))
 temp_comp_random <- data.frame(Date=time(temp_comp$random), Random=temp_comp$random)
 co_comp_random <- data.frame(Date=time(co_comp$random), Random=co_comp$random)
 NOx_comp_random <- data.frame(Date=time(NOx_comp$random), Random=NOx_comp$random)
+#trees_comp_random <- data.frame(Date=time(trees_comp$random), Random=trees_comp$random)
 
-window <- list(start=2010,end=2021)
+
+window <- list(start=1980,end=2021)
 
 temp_comp_random %<>% filter(Date>=window$start&Date<window$end)
 co_comp_random %<>% filter(Date>=window$start&Date<window$end)
 NOx_comp_random %<>% filter(Date>=window$start&Date<window$end)
+#trees_comp_random %<>% filter(Date>=window$start&Date<window$end)
 
 temp_comp_random_ts <- ts(temp_comp_random$Random, start=c(window$start,1), frequency=freq_daily)
 co_comp_random_ts <- ts(co_comp_random$Random, start=c(window$start,1), frequency=freq_daily)
 NOx_comp_random_ts <- ts(NOx_comp_random$Random, start=c(window$start,1), frequency=freq_daily)
+#trees_comp_random_ts <- ts(trees_comp_random$Random, start=c(window$start,1), frequency=freq_daily)
 
 
 # Cross correlation function
 # ccf(temp_comp_random_ts,co_comp_random_ts)
-ccf(temp_comp_random_ts,co_comp_random_ts, na.action = na.pass)
 
+ccf(temp_comp_random_ts, co_comp_random_ts, 
+    lag.max = 300,
+    main = "Temp - CO Cross-Correlation Plot",
+    ylab = "CCF", 
+    na.action = na.pass)
+ccf(tree_ts$count, air_yr$NOx, 
+    lag.max = 300,
+    main = "Trees - NOx Cross-Correlation Plot",
+    ylab = "CCF")
+ccf(tree_ts$count, air_yr$co, 
+    lag.max = 300,
+    main = "Trees - CO Cross-Correlation Plot",
+    ylab = "CCF")
+ccf(tree_ts$count, meteo_yr$temp, 
+    lag.max = 300,
+    main = "Trees - Temperature Cross-Correlation Plot",
+    ylab = "CCF")
 ```
 
 # Conclusions and findings
