@@ -77,6 +77,20 @@ tree_year_quartier_sum <- tree_year_quartier %>%
   mutate(cum_crown = cumsum(crown_sum))
 
 
+year_list <- do.call(seq, as.list(range(c(1983, 2023))))
+
+tree_year_quartier$pflanzjahr
+
+tree_impute_test <- tree_year_quartier %>%
+  ungroup(pflanzjahr) %>%
+  dplyr::select(quartier) %>%
+  expand(quartier, year_list) %>%
+  rename(pflanzjahr = year_list) %>%
+  full_join(tree_year_quartier, by = c('pflanzjahr', 'quartier')) %>%
+  arrange(pflanzjahr, quartier) %>%
+  fill(constant_y)
+
+
 
 merged_temp <- read_csv("/Users/fluethard/hslu/sustainability/git/sustainability/datasets/merged_temp.csv")
 
@@ -151,7 +165,39 @@ ref_temp_fluntern_year <- ref_temp_fluntern %>%
   dplyr::select(year, stn, temp_mean) %>%
   group_by(year, stn) %>%
   summarise(mean_temp = mean(temp_mean, na.rm = T)) %>%
-  filter(year > 1991)
+  filter(year > 1991) %>%
+  filter(year < 2023) %>%
+  rename(station = stn)
+
+year_temp_by_station_all <- rbind(year_temp_by_station, ref_temp_fluntern_year)
+
+year_temp_by_station_all <- year_temp_by_station_all %>%
+  add_column(quartier = case_when(year_temp_by_station_all$station == 'Zch_Stampfenbachstrasse' ~ 'Rathaus', year_temp_by_station_all$station == 'Zch_Rosengartenstrasse' ~ 'Wipkingen', year_temp_by_station_all$station == 'Zch_Schimmelstrasse' ~ 'Sihlfeld', year_temp_by_station_all$station == 'SMA' ~ 'Fluntern'))
+
+write_csv(year_temp_by_station_all, 'year_temp_by_station_all_for_tableau.csv')
+
+
+
+
+yearly_nox <- air %>%
+  add_column(quartier = case_when(air$Standort == 'Zch_Stampfenbachstrasse' ~ 'Rathaus', air$Standort == 'Zch_Rosengartenstrasse' ~ 'Wipkingen', air$Standort == 'Zch_Schimmelstrasse' ~ 'Sihlfeld', air$Standort == 'Zch_Heubeeribüel' ~ 'Fluntern')) %>%
+  filter(Parameter == 'NOx') %>%
+  dplyr::select(Jahr, Standort, quartier, Wert) %>%
+  group_by(Jahr, Standort, quartier) %>%
+  summarise(mean_nox = mean(Wert, na.rm = T)) %>%
+  rename(year = Jahr, station = Standort) %>%
+  filter(year < 2023)
+
+
+
+write_csv(yearly_nox, 'year_nox_tableau.csv')
+
+
+
+
+
+
+
   
   
 
