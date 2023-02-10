@@ -39,23 +39,23 @@ As can be seen the intended target for our research is to help achieve the goal 
 For the research there are three different data sets needed: Air quality information, temperature data, and a tree cadastre. All of these three data sets are publicly available. Following is a quick overview over the different data sets:
 
 ### Air quality
-Format: csv
-Number of rows: 283'763
-Number of variables: 8 (most important: date, location, type of measurement, value) 
-Source: https://data.stadt-zuerich.ch/dataset/ugz_luftschadstoffmessung_stundenwerte 
+Format: csv  
+Number of rows: 283'763  
+Number of variables: 8 (most important: date, location, type of measurement, value)   
+Source: https://data.stadt-zuerich.ch/dataset/ugz_luftschadstoffmessung_stundenwerte  
 
 ### Meteo
-Format: csv
-Number of rows: 4'747
-Number of variables: 17 (most important: date, temperature, location) 
-Source: https://opendata.swiss/de/dataset/taglich-aktualisierte-meteodaten-seit-1992 
+Format: csv  
+Number of rows: 4'747  
+Number of variables: 17 (most important: date, temperature, location)   
+Source: https://opendata.swiss/de/dataset/taglich-aktualisierte-meteodaten-seit-1992   
 
 ### Tree cadastre
-Format: csv
-Number of rows: 36'239
+Format: csv  
+Number of rows: 36'239  
 Number of variables: 17 (most important: year of  planting, diameter of crown, 
-district) 
-Source: https://data.stadt-zuerich.ch/dataset/geo_baumkataster 
+district)   
+Source: https://data.stadt-zuerich.ch/dataset/geo_baumkataster   
 
 
 ## Importing all packages and libraries
@@ -138,16 +138,21 @@ data_list.meteo <- lapply(filenames.meteo, read.csv)
 meteo <- do.call(rbind, data_list.meteo)
 
 names(meteo)[1] <- "Date"
+meteo$Date <- format(as.Date(meteo$Date), format = "%Y-%m-%d")
 
+# Datensatz mit Temperatur und Globalstrahlung pro Messstation
+meteo.extr <- meteo %>%
+  filter(Parameter == "T" | Parameter == "StrGlo" | Parameter =="T_max_h1")
+meteo.extr$Jahr <- year(meteo.extr$Date)
+
+# weiter mit "normalem" Meteodatensatz
 meteo <- meteo[meteo$Standort=="Zch_Stampfenbachstrasse",]
 meteo <- meteo %>% 
   select(c("Date","Parameter","Wert")) %>%
   pivot_wider(id_cols = "Date",names_from = "Parameter",values_from = "Wert") %>%
   select(c("Date","T","RainDur","p"))
 
-meteo$Date <- format(as.Date(meteo$Date), format = "%Y-%m-%d")
 meteo$Date <- ymd(meteo$Date)
-
 
 head(meteo)
 ```
@@ -270,7 +275,7 @@ boxplot(Wert ~ Jahr, data = air, subset = Parameter %in% names(table("NOx")),
         xlab = "Year", ylab = "ppb")
 
 # Boxplots for NOx per monitoring station
-air.he <- air %>% filter(Standort == "Zch_HeubeeribÃ¼el")
+air.he <- air %>% filter(Standort == "Zch_Heubeeribüel")
 air.ro <- air %>% filter(Standort == "Zch_Rosengartenstrasse")
 air.sc <- air %>% filter(Standort == "Zch_Schimmelstrasse")
 air.st <- air %>% filter(Standort == "Zch_Stampfenbachstrasse")
@@ -315,7 +320,6 @@ Having gained an overview of the data, we would now like to analyse the data in 
 ### Timeseries Analysis
 In this section we are trying to see if there is a correlation over time between the amount of trees and the air quality or temperature. For this we use timeseries analysis, meaning we need to convert our data into timeseries objects. After transforming them we can then look at the decomposition of the objects. Thus we are able to see trends, seasonality and residuals. However the seasonality is only visible for air pollution and temperature, as the tree information is only available on a yearly basis. 
 ```{r time_meteo, echo=TRUE}
-par(mfrow=c(2,1))
 
 meteo %<>% complete(Date=seq.Date(min(Date), max(Date), by='day'))
 
@@ -348,7 +352,19 @@ meteo_yr <- meteo %>%
   ungroup()
 
 
-temp_yr <- ts(meteo_yr$temp, start=min(meteo_yr$Year), frequency=1)
+temp_yr <- ts(temp, start=min(meteo_yr$Year))
+tb_temp_ts <- tbats(temp_yr)
+
+# Differ
+## twice-difference the CO2 data
+temp_d2 <- diff(temp, differences = 1)
+## plot the differenced data
+# plot(temp_d2, ylab = "Temperature without trend")
+
+## difference the differenced CO2 data
+temp_d2d12 <- diff(temp_d2, lag = 12)
+## plot the newly differenced data
+plot(temp_d2d12, ylab = "Temperature without trend and seasonality")
 
 ```
 Generally we can see that the temperature is slightly rising over time. There is a slight upwards trend noticeable and it is also important to remember how much danger a temperature increase of just one percent can be for the biodiversity. 
@@ -417,10 +433,14 @@ title(main = "NOx development over the years and trend line")
 # pacf(co_yr)
 # plot(tbats(co_yr))
 # title(sub = "CO ")
+tree_ts <-  ts(tree_ts_sum$sum_trees, start=min(tree_ts_sum$pflanzjahr), frequency=1)
+tb_tree_ts <- tbats(tree_ts)
+tb_co_ts <- tbats(co_yr)
+tb_nox_ts <- tbats(NOx_yr)
 
-plot(residuals(tbats(co_yr)))
+plot(residuals(tb_co_ts))
 title(main = "Residuals of CO")
-plot(residuals(tbats(NOx_yr)))
+plot(residuals(tb_nox_ts))
 title(main = "Residuals of NOx")
 
 # adf.test(co_yr)
@@ -460,19 +480,98 @@ NOx_comp_random_ts <- ts(NOx_comp_random$Random, start=c(window$start,1), freque
 #     main = "Temp - CO Cross-Correlation Plot",
 #     ylab = "CCF", 
 #     na.action = na.pass)
-ccf(tree_ts$count, air_yr$NOx, 
+
+ccf(residuals(tb_tree_ts), residuals(tb_nox_ts), 
     lag.max = 300,
     main = "Trees - NOx Cross-Correlation Plot",
     ylab = "CCF")
-ccf(tree_ts$count, air_yr$co, 
+ccf(residuals(tb_tree_ts), residuals(tb_co_ts), 
     lag.max = 300,
     main = "Trees - CO Cross-Correlation Plot",
     ylab = "CCF")
-ccf(tree_ts$count, meteo_yr$temp, 
+ccf(residuals(tb_tree_ts), residuals(tb_temp_ts), 
     lag.max = 300,
     main = "Trees - Temperature Cross-Correlation Plot",
     ylab = "CCF")
+
 ```
+Now one can see the correlations between the sum of trees and air quality (CO and NOx) as well as the correlation between the sum of trees and temperature. The graphs shows no strong correlations, although a slightly significant correlation with a lag is visible for amount of trees on air quality. Meaning that after a some time a larger amount of trees could have an influence in reducing Carbon monoxide and Nitrogen oxide in the air. 
+
+## Temperature trends
+
+
+
+```{r temperature_trends, echo=TRUE, fig.cap = "Fig. 1: temperature trends"}
+
+# Stampfenbach max of mean of daily temperature with trendline
+meteo.sta <- meteo.extr %>%
+  filter(Standort == "Zch_Stampfenbachstrasse") %>%
+  filter(Parameter == "T") %>%
+  group_by(Jahr, Parameter) %>%
+  summarize(Max = max(Wert, na.rm = TRUE), .groups = "drop")
+
+ggplot(meteo.sta, aes(x = Jahr, y = Max)) +
+  geom_line() +
+  ggtitle("Development of maximum of mean temperature at Stampfenbachstrasse") +
+  geom_smooth(method = "lm", se = FALSE)
+
+# Stampfenbach min of mean of daily temperature with trendline
+meteo.sta.min <- meteo.extr %>%
+  filter(Standort == "Zch_Stampfenbachstrasse") %>%
+  filter(Parameter == "T") %>%
+  group_by(Jahr, Parameter) %>%
+  summarize(Min = min(Wert, na.rm = TRUE), .groups = "drop")
+
+ggplot(meteo.sta.min, aes(x = Jahr, y = Min)) +
+  geom_line() +
+  ggtitle("Development of minimum of mean temperature at Stampfenbachstrasse") +
+  geom_smooth(method = "lm", se = FALSE)
+
+```
+
+The left graph in Fig. nn shows the yearly development of the max of the daily means .
+ 
+
+
+```{r temperature_trends_max, echo=TRUE, fig.cap = "Fig. 1: Text"}
+###
+# Stampfenbach max of max temperature with trendline
+meteo.sta.max <- meteo.extr %>%
+  filter(Standort == "Zch_Stampfenbachstrasse") %>%
+  filter(Parameter == "T_max_h1") %>%
+  group_by(Jahr, Parameter) %>%
+  summarize(Max = max(Wert, na.rm = TRUE), .groups = "drop")
+
+ggplot(meteo.sta.max, aes(x = Jahr, y = Max)) +
+  geom_line() +
+  ggtitle("Development of maximum daily temperature at Stampfenbachstrasse") +
+  geom_smooth(method = "lm", se = FALSE)
+
+```
+
+
+```{r temperature_lm, echo=TRUE}
+summary(lm(meteo.sta$Max ~ meteo.sta$Jahr))
+summary(lm(meteo.sta.min$Min ~ meteo.sta.min$Jahr))
+summary(lm(meteo.sta.max$Max ~ meteo.sta.max$Jahr))
+```
+
+```{r global_radiation, echo=TRUE}
+###
+# Stampfenbach mean of Globalstrahlung with trendline
+meteo.sta.glo <- meteo.extr %>%
+filter(Standort == "Zch_Stampfenbachstrasse") %>%
+  filter(Parameter == "StrGlo") %>%
+  group_by(Jahr, Parameter) %>%
+  summarize(Max = max(Wert, na.rm = TRUE), .groups = "drop")
+
+ggplot(meteo.sta.glo, aes(x = Jahr, y = Max)) +
+  geom_line() +
+  ggtitle("Development of mean of global radiation at Stampfenbachstrasse") +
+  geom_smooth(method = "lm", se = FALSE)
+summary(lm(meteo.sta.glo$Max ~ meteo.sta.glo$Jahr))
+```
+
 
 ## Conclusions and findings
 

@@ -43,7 +43,7 @@ meteo$Date <- format(as.Date(meteo$Date), format = "%Y-%m-%d")
 
 # Datensatz mit Temperatur und Globalstrahlung pro Messstation
 meteo.extr <- meteo %>%
-  filter(Parameter == "T" | Parameter == "StrGlo")
+  filter(Parameter == "T" | Parameter == "StrGlo" | Parameter =="T_max_h1")
 meteo.extr$Jahr <- year(meteo.extr$Date)
 
 
@@ -248,43 +248,79 @@ meteo.minmax <- meteo.extr %>%
 
 # meteo.minmax$Parameter <- as.factor(meteo.minmax$Parameter)
 # meteo.minmax$Standort <- as.factor(meteo.minmax$Standort)
- 
 
-############# bis da...
-
- 
 meteo.minmax.str <- meteo.minmax %>% filter(Parameter == "StrGlo")
 meteo.minmax.tem <- meteo.minmax %>% filter(Parameter == "T")
 
 #plot(meteo.minmax.str$Jahr, meteo.minmax.str$Max,  type = "l")
 #plot("Jahr", "Max", data = meteo.minmax.str, type = "l")
 
+# max Global Strahlung
 ggplot(meteo.minmax.str, aes(x = Jahr, y = Max)) +
-  geom_line()
+  geom_line() +
+  ggtitle("Development of Global-Strahlung")
 
+# max Temperatur je Messstation
 ggplot(meteo.minmax.tem, aes(x = Jahr, y = Max)) +
-  geom_line(aes(color = Standort, linetype = Standort))
+  geom_line(aes(color = Standort, linetype = Standort)) +
+  ggtitle("Development of temperature")
 
 
-#  subset(meteo.minmax$Parameter meteo.minmax.str= "T")  %>% 
-#      ggplot(aes(x = "Jahr", y = Wert, colour = Standort, group = Standort)) +
-#  geom_line()
+###
+# Stampfenbach max of mean temperature with trendline
+meteo.sta <- meteo.extr %>%
+  filter(Standort == "Zch_Stampfenbachstrasse") %>%
+  filter(Parameter == "T") %>%
+  group_by(Jahr, Parameter) %>%
+  summarize(Max = max(Wert, na.rm = TRUE), .groups = "drop")
+
+ggplot(meteo.sta, aes(x = Jahr, y = Max)) +
+  geom_line() +
+  ggtitle("Development of maximum (of mean) temperature at Stampfenbachstrasse") +
+  geom_smooth(method = "lm", se = FALSE)
+summary(lm(meteo.sta$Max ~ meteo.sta$Jahr))
+
+###
+# Stampfenbach max of mean temperature with trendline
+meteo.sta.min <- meteo.extr %>%
+  filter(Standort == "Zch_Stampfenbachstrasse") %>%
+  filter(Parameter == "T") %>%
+  group_by(Jahr, Parameter) %>%
+  summarize(Min = min(Wert, na.rm = TRUE), .groups = "drop")
+
+ggplot(meteo.sta.min, aes(x = Jahr, y = Min)) +
+  geom_line() +
+  ggtitle("Development of minimum of mean temperature at Stampfenbachstrasse") +
+  geom_smooth(method = "lm", se = FALSE)
+summary(lm(meteo.sta.min$Min ~ meteo.sta.min$Jahr))
+
+###
+# Stampfenbach min of mean temperature with trendline
+meteo.sta.max <- meteo.extr %>%
+  filter(Standort == "Zch_Stampfenbachstrasse") %>%
+  filter(Parameter == "T_max_h1") %>%
+  group_by(Jahr, Parameter) %>%
+  summarize(Max = max(Wert, na.rm = TRUE), .groups = "drop")
+
+ggplot(meteo.sta.max, aes(x = Jahr, y = Max)) +
+  geom_line() +
+  ggtitle("Development of maximum daily temperature at Stampfenbachstrasse") +
+  geom_smooth(method = "lm", se = FALSE)
+summary(lm(meteo.sta.max$Max ~ meteo.sta.max$Jahr))
+
+###
+# Stampfenbach mean of Globalstrahlung with trendline
+meteo.sta.glo <- meteo.extr %>%
+filter(Standort == "Zch_Stampfenbachstrasse") %>%
+  filter(Parameter == "StrGlo") %>%
+  group_by(Jahr, Parameter) %>%
+  summarize(Max = max(Wert, na.rm = TRUE), .groups = "drop")
+
+ggplot(meteo.sta.glo, aes(x = Jahr, y = Max)) +
+  geom_line() +
+  ggtitle("Development of mean of global radiation temperature at Stampfenbachstrasse") +
+  geom_smooth(method = "lm", se = FALSE)
+summary(lm(meteo.sta.glo$Max ~ meteo.sta.glo$Jahr))
 
 
-plot_data_lines %>%
-  filter(City %in% c("Lima", "Bogota","Cali")) %>%
-  ggplot(aes(x = as.numeric(Year), y = value, color = City)) +
-  geom_line() + 
-  labs(x = "Year")
-
-
-
-
-
-
-ggplot(df, aes(x = x, y = value, color = variable)) +
-  geom_line()
-
-sapply(meteo.minmax, class)
-
-plot(meteo.minmax$Max)
+# Globalstrahlung
