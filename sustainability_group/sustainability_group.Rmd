@@ -488,7 +488,11 @@ ccf(residuals(tb_tree_ts), residuals(tb_temp_ts),
 ```
 
 
-```{r globalstrahlung, echo=TRUE}
+## Temperature trends
+
+
+
+```{r temperature_trends, echo=TRUE, fig.cap = "Fig. 1: temperature trends"}
 
 # Stampfenbach max of mean of daily temperature with trendline
 meteo.sta <- meteo.extr %>%
@@ -499,11 +503,9 @@ meteo.sta <- meteo.extr %>%
 
 ggplot(meteo.sta, aes(x = Jahr, y = Max)) +
   geom_line() +
-  ggtitle("Development of maximum (of mean) temperature at Stampfenbachstrasse") +
+  ggtitle("Development of maximum of mean temperature at Stampfenbachstrasse") +
   geom_smooth(method = "lm", se = FALSE)
-summary(lm(meteo.sta$Max ~ meteo.sta$Jahr))
 
-###
 # Stampfenbach min of mean of daily temperature with trendline
 meteo.sta.min <- meteo.extr %>%
   filter(Standort == "Zch_Stampfenbachstrasse") %>%
@@ -515,11 +517,16 @@ ggplot(meteo.sta.min, aes(x = Jahr, y = Min)) +
   geom_line() +
   ggtitle("Development of minimum of mean temperature at Stampfenbachstrasse") +
   geom_smooth(method = "lm", se = FALSE)
-summary(lm(meteo.sta.min$Min ~ meteo.sta.min$Jahr))
+
+```
+
+The left graph in Fig. nn shows the yearly development of the max of the daily means .
+ 
 
 
+```{r temperature_trends_max, echo=TRUE, fig.cap = "Fig. 1: Text"}
 ###
-# Stampfenbach max of mean temperature with trendline
+# Stampfenbach max of max temperature with trendline
 meteo.sta.max <- meteo.extr %>%
   filter(Standort == "Zch_Stampfenbachstrasse") %>%
   filter(Parameter == "T_max_h1") %>%
@@ -530,8 +537,17 @@ ggplot(meteo.sta.max, aes(x = Jahr, y = Max)) +
   geom_line() +
   ggtitle("Development of maximum daily temperature at Stampfenbachstrasse") +
   geom_smooth(method = "lm", se = FALSE)
-summary(lm(meteo.sta.max$Max ~ meteo.sta.max$Jahr))
 
+```
+
+
+```{r temperature_lm, echo=TRUE}
+summary(lm(meteo.sta$Max ~ meteo.sta$Jahr))
+summary(lm(meteo.sta.min$Min ~ meteo.sta.min$Jahr))
+summary(lm(meteo.sta.max$Max ~ meteo.sta.max$Jahr))
+```
+
+```{r global_radiation, echo=TRUE}
 ###
 # Stampfenbach mean of Globalstrahlung with trendline
 meteo.sta.glo <- meteo.extr %>%
@@ -545,7 +561,6 @@ ggplot(meteo.sta.glo, aes(x = Jahr, y = Max)) +
   ggtitle("Development of mean of global radiation at Stampfenbachstrasse") +
   geom_smooth(method = "lm", se = FALSE)
 summary(lm(meteo.sta.glo$Max ~ meteo.sta.glo$Jahr))
-
 ```
 
 
