@@ -315,7 +315,6 @@ Having gained an overview of the data, we would now like to analyse the data in 
 ### Timeseries Analysis
 In this section we are trying to see if there is a correlation over time between the amount of trees and the air quality or temperature. For this we use timeseries analysis, meaning we need to convert our data into timeseries objects. After transforming them we can then look at the decomposition of the objects. Thus we are able to see trends, seasonality and residuals. However the seasonality is only visible for air pollution and temperature, as the tree information is only available on a yearly basis. 
 ```{r time_meteo, echo=TRUE}
-par(mfrow=c(2,1))
 
 meteo %<>% complete(Date=seq.Date(min(Date), max(Date), by='day'))
 
@@ -348,7 +347,8 @@ meteo_yr <- meteo %>%
   ungroup()
 
 
-temp_yr <- ts(meteo_yr$temp, start=min(meteo_yr$Year), frequency=1)
+temp_yr <- ts(temp, start=min(meteo_yr$Year))
+tb_temp_ts <- tbats(temp_yr)
 
 ```
 Generally we can see that the temperature is slightly rising over time. There is a slight upwards trend noticeable and it is also important to remember how much danger a temperature increase of just one percent can be for the biodiversity. 
@@ -417,10 +417,14 @@ title(main = "NOx development over the years and trend line")
 # pacf(co_yr)
 # plot(tbats(co_yr))
 # title(sub = "CO ")
+tree_ts <-  ts(tree_ts_sum$sum_trees, start=min(tree_ts_sum$pflanzjahr), frequency=1)
+tb_tree_ts <- tbats(tree_ts)
+tb_co_ts <- tbats(co_yr)
+tb_nox_ts <- tbats(NOx_yr)
 
-plot(residuals(tbats(co_yr)))
+plot(residuals(tb_co_ts))
 title(main = "Residuals of CO")
-plot(residuals(tbats(NOx_yr)))
+plot(residuals(tb_nox_ts))
 title(main = "Residuals of NOx")
 
 # adf.test(co_yr)
@@ -460,19 +464,25 @@ NOx_comp_random_ts <- ts(NOx_comp_random$Random, start=c(window$start,1), freque
 #     main = "Temp - CO Cross-Correlation Plot",
 #     ylab = "CCF", 
 #     na.action = na.pass)
-ccf(tree_ts$count, air_yr$NOx, 
+
+ccf(residuals(tb_tree_ts), residuals(tb_nox_ts), 
     lag.max = 300,
     main = "Trees - NOx Cross-Correlation Plot",
     ylab = "CCF")
-ccf(tree_ts$count, air_yr$co, 
+ccf(residuals(tb_tree_ts), residuals(tb_co_ts), 
     lag.max = 300,
     main = "Trees - CO Cross-Correlation Plot",
     ylab = "CCF")
-ccf(tree_ts$count, meteo_yr$temp, 
+ccf(residuals(tb_tree_ts), residuals(tb_temp_ts), 
     lag.max = 300,
     main = "Trees - Temperature Cross-Correlation Plot",
     ylab = "CCF")
+
+# Differenzieren
+    
 ```
+
+
 
 ## Conclusions and findings
 
