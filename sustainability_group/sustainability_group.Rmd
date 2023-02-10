@@ -24,10 +24,16 @@ knitr::opts_chunk$set(echo = TRUE)
 Sustainability offers a variety of challenges and opportunities in regard to data science. More and more data is available from around the global in regards to sustainability and each regions has its on challenges with sustainability. However, for this project we will focus on a problem that is more local to us. We are going to analyse the impact trees have on our everyday lives in regards to temperature and air quality.
 
 
-## Goal of the project:
+## Goal of the project
 We would like to prove that the planting of trees and the development of green spaces in an urban environment have positive correlations with the development of air quality indicators and a negative impact on temperatures in the city of Zurich. This project will try to pinpoint the effect trees have on these indicators. The results will be presented in a way to inform politicians, urban developers as well as the public about the impact that a more green city could have on our everyday lives. 
 While there are a number of potential factors, both local and national/global, can have a significant impact on the climate and for this research we are choosing to focus on data from Zürich in regards to air quality, temperature information and the tree inventory. Further factors are described using sources, but are not included in the data analysis.
+To clarify our project goal and narrow it down we drew the following picture:
 
+It shows two potential futures for Zürich. One with more green spaces and one with more urban wasteland. The idea of the project is to find out how much the trees and green spaces actually impact the city of Zürich in regard to temperature and air pollution. 
+
+### Stakeholders
+To ensure we include all potential stakeholders in our project to
+![Stakeholders](../images/Stakeholders.png)
 
 ## Big Picture: Embedding in the Sustainable Development Goals (SDG)
 The SDGs lay out the goals that the global community has agreed on. Total there are 17 goals and they range from 1. No poverty to 17. Partnerships for the goals and include social, economic and environmental targets. For the research we have identified the relevant goals and put them into the three different categories: Risk, Opportunity and Intended. 
@@ -343,14 +349,12 @@ plot(temp, main="Temperature trend per year")
 abline(temp_trend)
 
 # Prepare yearly data
-
 meteo_yr <- meteo %>%
   mutate(temp_raw=replace_na(T,0)) %>%
   group_by(Year=year(Date)) %>%
   filter(Year>=1980 & Year<=2021) %>%
   summarize(temp=mean(temp_raw)) %>%
   ungroup()
-
 
 temp_yr <- ts(temp, start=min(meteo_yr$Year))
 tb_temp_ts <- tbats(temp_yr)
@@ -495,6 +499,7 @@ ccf(residuals(tb_tree_ts), residuals(tb_temp_ts),
     ylab = "CCF")
 
 ```
+
 Now one can see the correlations between the sum of trees and air quality (CO and NOx) as well as the correlation between the sum of trees and temperature. The graphs shows no strong correlations, although a slightly significant correlation with a lag is visible for amount of trees on air quality. Meaning that after a some time a larger amount of trees could have an influence in reducing Carbon monoxide and Nitrogen oxide in the air. 
 
 ## Temperature trends
@@ -557,7 +562,7 @@ summary(lm(meteo.sta.max$Max ~ meteo.sta.max$Jahr))
 ```
 
 ```{r global_radiation, echo=TRUE}
-###
+
 # Stampfenbach mean of Globalstrahlung with trendline
 meteo.sta.glo <- meteo.extr %>%
 filter(Standort == "Zch_Stampfenbachstrasse") %>%
@@ -572,11 +577,13 @@ ggplot(meteo.sta.glo, aes(x = Jahr, y = Max)) +
 summary(lm(meteo.sta.glo$Max ~ meteo.sta.glo$Jahr))
 ```
 
+## Tableau Dashboards
+
 
 ## Conclusions and findings
 
 
 ## Outlook and next steps
-
+While we did manage to get some very insightful and interesting results, we did also come across some issues, mostly with the data availability and quality. It would be useful to collect more data from across the different districts in Zürich. It would also be helpful if that data would be completely available across a time-frame of at least 20 years. This would allow for creating a more complete picture and better comparisons among districts. Another possibility would be take a closer look at some of the outliers using Extreme Value Theory (EVT). A further approach would be to create a simulation. While this would obviously involve a lot more effort, it would allow to simulate potential scenarios and could thus help city planners and politicians to make more informed policy decisions.  
 
 
