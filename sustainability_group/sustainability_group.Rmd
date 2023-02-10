@@ -275,14 +275,14 @@ boxplot(Wert ~ Jahr, data = air, subset = Parameter %in% names(table("NOx")),
         xlab = "Year", ylab = "ppb")
 
 # Boxplots for NOx per monitoring station
-air.he <- air %>% filter(Standort == "Zch_Heubeeribüel")
+#air.he <- air %>% filter(Standort == "Zch_Heubeeribüel")
 air.ro <- air %>% filter(Standort == "Zch_Rosengartenstrasse")
 air.sc <- air %>% filter(Standort == "Zch_Schimmelstrasse")
 air.st <- air %>% filter(Standort == "Zch_Stampfenbachstrasse")
 
-boxplot(Wert ~ Jahr, data = air.he, subset = Parameter %in% names(table("NOx")),
-        main= "NOx at Heubeeribuel per Year [ppb]",
-        xlab = "Year", ylab = "ppb")
+# boxplot(Wert ~ Jahr, data = air.he, subset = Parameter %in% names(table("NOx")),
+#         main= "NOx at Heubeeribuel per Year [ppb]",
+#         xlab = "Year", ylab = "ppb")
 boxplot(Wert ~ Jahr, data = air.ro, subset = Parameter %in% names(table("NOx")),
         main= "NOx at Rosengartenstrasse per Year [ppb]",
         xlab = "Year", ylab = "ppb")
