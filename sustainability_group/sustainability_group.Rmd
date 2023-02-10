@@ -275,7 +275,7 @@ boxplot(Wert ~ Jahr, data = air, subset = Parameter %in% names(table("NOx")),
         xlab = "Year", ylab = "ppb")
 
 # Boxplots for NOx per monitoring station
-air.he <- air %>% filter(Standort == "Zch_HeubeeribÃ¼el")
+air.he <- air %>% filter(Standort == "Zch_Heubeeribüel")
 air.ro <- air %>% filter(Standort == "Zch_Rosengartenstrasse")
 air.sc <- air %>% filter(Standort == "Zch_Schimmelstrasse")
 air.st <- air %>% filter(Standort == "Zch_Stampfenbachstrasse")
@@ -354,6 +354,17 @@ meteo_yr <- meteo %>%
 
 temp_yr <- ts(temp, start=min(meteo_yr$Year))
 tb_temp_ts <- tbats(temp_yr)
+
+# Differ
+## twice-difference the CO2 data
+temp_d2 <- diff(temp, differences = 1)
+## plot the differenced data
+# plot(temp_d2, ylab = "Temperature without trend")
+
+## difference the differenced CO2 data
+temp_d2d12 <- diff(temp_d2, lag = 12)
+## plot the newly differenced data
+plot(temp_d2d12, ylab = "Temperature without trend and seasonality")
 
 ```
 Generally we can see that the temperature is slightly rising over time. There is a slight upwards trend noticeable and it is also important to remember how much danger a temperature increase of just one percent can be for the biodiversity. 
@@ -483,10 +494,8 @@ ccf(residuals(tb_tree_ts), residuals(tb_temp_ts),
     main = "Trees - Temperature Cross-Correlation Plot",
     ylab = "CCF")
 
-# Differenzieren
-    
 ```
-
+Now one can see the correlations between the sum of trees and air quality (CO and NOx) as well as the correlation between the sum of trees and temperature. The graphs shows no strong correlations, although a slightly significant correlation with a lag is visible for amount of trees on air quality. Meaning that after a some time a larger amount of trees could have an influence in reducing Carbon monoxide and Nitrogen oxide in the air. 
 
 ## Temperature trends
 
