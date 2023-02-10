@@ -130,8 +130,29 @@ temp_by_station_2022 <- merged_temp %>%
   
 
 
+  # New station data from Salomon Idaweb
   
+temp_affoltern <- read.csv('/Users/fluethard/hslu/sustainability/git/sustainability/datasets/temp_affoltern.csv', sep = ';', fill = T)
+  
+temp_fluntern <- read.csv('/Users/fluethard/hslu/sustainability/git/sustainability/datasets/temp_fluntern.csv', sep = ';')
+
+read.csv
+
+ref_temp_fluntern <- temp_fluntern %>%
+  dplyr::select(stn, time, ths200dx, ths200d0)
+
+ref_temp_fluntern <- ref_temp_fluntern %>%
+  rename(c(temp_mean = ths200d0, temp_max =ths200dx)) %>%
+  mutate(time = lubridate::ymd(time))
   
 
+ref_temp_fluntern_year <- ref_temp_fluntern %>%
+  add_column(year = lubridate::year(ref_temp_fluntern$time)) %>%
+  dplyr::select(year, stn, temp_mean) %>%
+  group_by(year, stn) %>%
+  summarise(mean_temp = mean(temp_mean, na.rm = T)) %>%
+  filter(year > 1991)
+  
+  
 
 
