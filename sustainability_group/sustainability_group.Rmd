@@ -28,12 +28,14 @@ Sustainability offers a variety of challenges and opportunities in regard to dat
 We would like to prove that the planting of trees and the development of green spaces in an urban environment have positive correlations with the development of air quality indicators and a negative impact on temperatures in the city of Zurich. This project will try to pinpoint the effect trees have on these indicators. The results will be presented in a way to inform politicians, urban developers as well as the public about the impact that a more green city could have on our everyday lives. 
 While there are a number of potential factors, both local and national/global, can have a significant impact on the climate and for this research we are choosing to focus on data from Zürich in regards to air quality, temperature information and the tree inventory. Further factors are described using sources, but are not included in the data analysis.
 To clarify our project goal and narrow it down we drew the following picture:
-
+![Target Picture](../images/trees_vs_Pollution.png)
 It shows two potential futures for Zürich. One with more green spaces and one with more urban wasteland. The idea of the project is to find out how much the trees and green spaces actually impact the city of Zürich in regard to temperature and air pollution. 
 
 ### Stakeholders
-To ensure we include all potential stakeholders in our project to
+To ensure we include all potential stakeholders in our project at the appropriate level we create the following stakeholder map:
 ![Stakeholders](../images/Stakeholders.png)
+We sorted them into three possible categories: "direct", "indirect", "unintended". Our main target is to work together with Grüne Stadt Zürich an convince the politicians, the goverment and urban planners on the benefits of a greener city.
+
 
 ## Big Picture: Embedding in the Sustainable Development Goals (SDG)
 The SDGs lay out the goals that the global community has agreed on. Total there are 17 goals and they range from 1. No poverty to 17. Partnerships for the goals and include social, economic and environmental targets. For the research we have identified the relevant goals and put them into the three different categories: Risk, Opportunity and Intended. 
