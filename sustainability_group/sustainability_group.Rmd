@@ -27,18 +27,22 @@ Sustainability offers a variety of challenges and opportunities in regard to dat
 ## Goal of the project
 We would like to prove that the planting of trees and the development of green spaces in an urban environment have positive correlations with the development of air quality indicators and a negative impact on temperatures in the city of Zurich. This project will try to pinpoint the effect trees have on these indicators. The results will be presented in a way to inform politicians, urban developers as well as the public about the impact that a more green city could have on our everyday lives. 
 While there are a number of potential factors, both local and national/global, can have a significant impact on the climate and for this research we are choosing to focus on data from Zürich in regards to air quality, temperature information and the tree inventory. Further factors are described using sources, but are not included in the data analysis.
-To clarify our project goal and narrow it down we drew the following picture:
-![Target Picture](../images/trees_vs_Pollution.png)
+To clarify our project goal and narrow it down we drew the following picture: 
+
+![Target Picture](../images/trees_vs_Pollution.png)  
+
 It shows two potential futures for Zürich. One with more green spaces and one with more urban wasteland. The idea of the project is to find out how much the trees and green spaces actually impact the city of Zürich in regard to temperature and air pollution. 
 
 ### Stakeholders
-To ensure we include all potential stakeholders in our project at the appropriate level we create the following stakeholder map:
+To ensure we include all potential stakeholders in our project at the appropriate level we create the following stakeholder map: 
+
 ![Stakeholders](../images/Stakeholders.png)
+
 We sorted them into three possible categories: "direct", "indirect", "unintended". Our main target is to work together with Grüne Stadt Zürich an convince the politicians, the goverment and urban planners on the benefits of a greener city.
 
 
 ## Big Picture: Embedding in the Sustainable Development Goals (SDG)
-The SDGs lay out the goals that the global community has agreed on. Total there are 17 goals and they range from 1. No poverty to 17. Partnerships for the goals and include social, economic and environmental targets. For the research we have identified the relevant goals and put them into the three different categories: Risk, Opportunity and Intended. 
+The SDGs lay out the goals that the global community (United Nations General Assembly in 2015) has agreed on. Total there are 17 goals and they range from 1. No poverty to 17. Partnerships for the goals and include social, economic and environmental targets. For the research we have identified the relevant goals and put them into the three different categories: Risk, Opportunity and Intended. 
 ![Sustainable Development Goals](../images/sdg.png)
 As can be seen the intended target for our research is to help achieve the goal number 3. Good health and well being. This can be achieved if we can prove a correlation between the amount of trees in a region and an improvement in air quality, which could then lead to increase of planting of new trees in Zürich as well as a reduction of concrete wastelands in favor of green spaces. There are a number opportunities as well in regards to climate action, economic growth and affordable and clean energy. The are only limited risks that this project has. However it is imaginable that the improvement in air quality in certain areas could lead to a increase in inequalities between the rich and poor. It is also important to always be responsible and think of possible unintended consequences while planning for new green zones and planting new trees.
 
@@ -139,6 +143,7 @@ tree_year_sum <- tree_year %>%
 ```
 
 Next we load all the temperature information from the meteo data set. While this data set includes other information such as rain duration we will only use the temperature, as it seems unlikely that the amount of trees significantly impact the rain fall in an area. 
+
 ```{r temp, echo=TRUE}
 filenames.meteo <- list.files(path = "../datasets/meteo/", pattern = "*.csv", full.names = TRUE)
 data_list.meteo <- lapply(filenames.meteo, read.csv)
@@ -166,6 +171,7 @@ head(meteo)
 ```
 
 Lastly the air quality data is loaded. While there are multiple location were air quality was measured not every station measured each variable. They also were not all built at the same time. 
+
 ```{r air, echo=TRUE}
 
 filenames.air <- list.files(path = "../datasets/air/", pattern = "*.csv", full.names = TRUE)
@@ -202,6 +208,7 @@ air.NOx <- air.short[keep]
 
 ## Insights into our datasets
 To gain insights from the available information we have created a number of graphics. These already show preliminary results of our project.
+
 ```{r plot_air, echo=TRUE}
 
 #melt data frame into long format
@@ -222,12 +229,26 @@ air.means = air %>%
 
 ```
 
-```{r air_mean_line_graphs, echo=TRUE}
+The following graphs show the development over time for some specific air pollutants as of 1983.
 
+```{r air_mean_line_graphs, echo=FALSE, fig.show="hold", out.width="33%", fig.cap = "Fig. nnn: Carbon monoxide and particulate matter"}
 plot(subset(air.means, Parameter == "CO", 
             c(Jahr, Mean)), type = "l",
      main = "Mean of CO per Year [mg/m3]")  
 
+plot(subset(air.means, Parameter == "PM10",
+            c(Jahr, Mean)), type = "l",
+     main = "Mean of PM10 per Year [mg/m3]") 
+
+plot(subset(air.means, Parameter == "PM2.5",
+            c(Jahr, Mean)), type = "l",
+     main = "Mean of PM2.5 per Year [mg/m3]") 
+```
+
+Figure nnn above on the left hand shows the mean amount of carbon monoxide per year as of 1983. The average could be reduced to a large extent until 1990, but we couldn't find a explanation in the internet to which we could refer, as most time series only start as of 1990. We assume that this is - besides other potential influencing factors - a direct impact of the implementation of catalysts in the cars, which should reduce carbon monoxide, hydrocarbon and nitrogen oxyds. The two graphs on the right side show two different sizes of particulate matter, for which we only have data as of 2017 for the very small particulate matter PM2.5. We can observe in the two graphs an improvement over the years as well.  
+
+
+```{r air_mean_no_line_graphs, echo=TRUE, fig.show="hold", out.width="33%"}
 plot(subset(air.means, Parameter == "NO", 
             c(Jahr, Mean)), type = "l",
      main = "Mean of NO per Year [µg/m3]")
@@ -240,6 +261,21 @@ plot(subset(air.means, Parameter == "NOx",
             c(Jahr, Mean)), type = "l",
      main = "Mean of NOx per Year [ppb]")
 
+
+#nrow(air[air.means$Parameter == "NO" & air.means$Jahr == "2008"])
+#nrow(air[air.means$Parameter == "NO" & air.means$Jahr == "2009"])
+#nrow(subset(air.means,sCode == "CA"))
+
+```
+
+
+Nitric Oxide
+Nitrogen dioxide
+Nitrogen oxides
+
+
+
+```{r next_air_mean_o_line_graphs, echo=FALSE, fig.show="hold", out.width="33%"}
 plot(subset(air.means, Parameter == "O3", 
             c(Jahr, Mean)), type = "l",
      main = "Mean of O3 per Year [µg/m3]") 
@@ -252,14 +288,10 @@ plot(subset(air.means, Parameter == "O3_nb_h1>120",
             c(Jahr, Mean)), type = "l",
      main = "Mean of O3_nb_h1>120 per Year [1]") 
 
-plot(subset(air.means, Parameter == "PM10",
-            c(Jahr, Mean)), type = "l",
-     main = "Mean of PM10 per Year [mg/m3]") 
+```
 
-plot(subset(air.means, Parameter == "PM2.5",
-            c(Jahr, Mean)), type = "l",
-     main = "Mean of PM2.5 per Year [mg/m3]") 
 
+```{r next_air_mean_rest_line_graphs, echo=FALSE, fig.show="hold", out.width="50%", fig.align='center'}
 plot(subset(air.means, Parameter == "PN",
             c(Jahr, Mean)), type = "l",
      main = "Mean of PN per Year [1/cm3]") 
@@ -269,6 +301,7 @@ plot(subset(air.means, Parameter == "SO2",
      main = "Mean of SO2 per Year [µg/m3]")
 
 ```
+
 One can see that the both the "NOx" and the "CO" graph show that the air quality has improved significantly since 1980. It is unlikely to say the least that trees are the only factor in this improvement. More likely other factors such as new laws and regulations in regards to catalysts of cars are more likely the major factor.
 
 
