@@ -31,17 +31,6 @@ yearly_aq <- yearly_air %>%
   group_by(year) %>%
   summarise(mean_co = mean(CO, na.rm = T), mean_no2 = mean(NO2, na.rm = T), mean_no = mean(NO, na.rm = T), mean_nox = mean(NOx, na.rm = T), mean_so2 = mean(SO2, na.rm = T))
 
-
-yearly_station_co <- air %>%
-  add_column(year = lubridate::year(air$Date)) %>%
-  rename(station = 'Standort') %>%
-  filter(Parameter == 'NO2') %>%
-  dplyr::select(year, station, Wert) %>%
-  group_by(year, station) %>%
-  summarise(mean_co = mean(Wert, na.rm = T))
-  
-
-
 # sum of trees
 tree_ts_sum <- tree_ts %>%
  mutate(sum_trees = cumsum(count))
@@ -81,22 +70,27 @@ tree_year_quartier <- d.trees %>%
   dplyr::select(pflanzjahr, quartier, kronendurchmesser) %>%
   filter(pflanzjahr > 1980) %>%
   group_by(pflanzjahr, quartier) %>%
-  summarise(tree_count = n(), crown_sum = sum(kronendurchmesser))
+  summarise(tree_count = n(), crown_sum = sum(kronendurchmesser), total_sum = cumsum(tree_count))
 
 tree_year_quartier_sum <- tree_year_quartier %>%
-  group_by(quartier, pflanzjahr) %>%
-  summarise(cum_trees = cumsum(tree_count)) 
-
-tree_year_quartier_sum2 <- tree_year_quartier_sum %>%
-  group_by(quartier) %>%
-  summarise(cum_trees2 = cumsum(cum_trees)) %>%
-  add_column(year = tree_year_quartier_sum$pflanzjahr)
-
-write_csv(tree_year_quartier_sum2, 'tree_sum_for_tableau_2022.csv')
+  mutate(cum_trees = cumsum(tree_count)) %>%
+  mutate(cum_crown = cumsum(crown_sum))
 
 
+year_list <- do.call(seq, as.list(range(c(1983, 2023))))
 
+tree_year_quartier$pflanzjahr
 
+tree_year_quartier2 <- tree_year_quartier %>%
+  ungroup(pflanzjahr) %>%
+  dplyr::select(quartier) %>%
+  expand(quartier, year_list) %>%
+  rename(pflanzjahr = year_list) %>%
+  full_join(tree_year_quartier, by = c('pflanzjahr', 'quartier')) %>%
+  arrange(pflanzjahr, quartier) %>%
+  fill(tree_count, crown_sum)
+
+write_csv(tree_year_quartier2, 'tree_year_quartier_for_tableau.csv')
 
 
 merged_temp <- read_csv("/Users/fluethard/hslu/sustainability/git/sustainability/datasets/merged_temp.csv")
@@ -151,8 +145,61 @@ temp_by_station_2022 <- merged_temp %>%
   
 
 
+  # New station data from Salomon Idaweb
   
+temp_affoltern <- read.csv('/Users/fluethard/hslu/sustainability/git/sustainability/datasets/temp_affoltern.csv', sep = ';', fill = T)
+  
+temp_fluntern <- read.csv('/Users/fluethard/hslu/sustainability/git/sustainability/datasets/temp_fluntern.csv', sep = ';')
+
+read.csv
+
+ref_temp_fluntern <- temp_fluntern %>%
+  dplyr::select(stn, time, ths200dx, ths200d0)
+
+ref_temp_fluntern <- ref_temp_fluntern %>%
+  rename(c(temp_mean = ths200d0, temp_max =ths200dx)) %>%
+  mutate(time = lubridate::ymd(time))
   
 
+ref_temp_fluntern_year <- ref_temp_fluntern %>%
+  add_column(year = lubridate::year(ref_temp_fluntern$time)) %>%
+  dplyr::select(year, stn, temp_mean) %>%
+  group_by(year, stn) %>%
+  summarise(mean_temp = mean(temp_mean, na.rm = T)) %>%
+  filter(year > 1991) %>%
+  filter(year < 2023) %>%
+  rename(station = stn)
+
+year_temp_by_station_all <- rbind(year_temp_by_station, ref_temp_fluntern_year)
+
+year_temp_by_station_all <- year_temp_by_station_all %>%
+  add_column(quartier = case_when(year_temp_by_station_all$station == 'Zch_Stampfenbachstrasse' ~ 'Rathaus', year_temp_by_station_all$station == 'Zch_Rosengartenstrasse' ~ 'Wipkingen', year_temp_by_station_all$station == 'Zch_Schimmelstrasse' ~ 'Sihlfeld', year_temp_by_station_all$station == 'SMA' ~ 'Fluntern'))
+
+write_csv(year_temp_by_station_all, 'year_temp_by_station_all_for_tableau.csv')
+
+
+
+
+yearly_nox <- air %>%
+  add_column(quartier = case_when(air$Standort == 'Zch_Stampfenbachstrasse' ~ 'Rathaus', air$Standort == 'Zch_Rosengartenstrasse' ~ 'Wipkingen', air$Standort == 'Zch_Schimmelstrasse' ~ 'Sihlfeld', air$Standort == 'Zch_Heubeeribüel' ~ 'Fluntern')) %>%
+  filter(Parameter == 'NOx') %>%
+  dplyr::select(Jahr, Standort, quartier, Wert) %>%
+  group_by(Jahr, Standort, quartier) %>%
+  summarise(mean_nox = mean(Wert, na.rm = T)) %>%
+  rename(year = Jahr, station = Standort) %>%
+  filter(year < 2023)
+
+
+
+write_csv(yearly_nox, 'year_nox_tableau.csv')
+
+
+
+
+
+
+
+  
+  
 
 
