@@ -15,7 +15,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
 # TREES  -  TREES  -  TREES
@@ -77,10 +77,9 @@ Number of variables: 17 (most important: year of  planting, diameter of crown,
 district)   
 Source: https://data.stadt-zuerich.ch/dataset/geo_baumkataster   
 
+## Data preparation
 
-## Importing all packages and libraries
-The following libraries were used to analyse the data:
-
+<!--- Loading of all needed libraries in R: --->
 ```{r lib, echo=FALSE, include=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(tseries)
@@ -92,11 +91,12 @@ library(dplyr)
 library(lubridate)
 library(tidyr)  
 library(ggplot2)
+library(gridExtra)
+library(grid)
 library(reshape2) 
 
 ```
 
-## Data preparation
 In this step we collected the three data sets and prepared them so that they are for use in the analysis. To achieve this, certain changes to the data were necessary to facilitate an informative analysis. 
 
 First we loaded the tree cadastre data and wrangled the data to get additional information such as the amount of trees per year and the number of trees by district.
@@ -213,22 +213,76 @@ air.NOx <- air.short[keep]
 
 ```
 
+\
 
-## Insights into our datasets
-To gain insights from the available information we have created a number of graphics. These already show preliminary results of our project.
+# Insights into our datasets
 
-```{r plot_air, echo=TRUE}
+\
+
+To gain insights from the available information we have created a number of graphical overviews. These already show preliminary results of our analysis.
+
+\
+
+## Air quality in Zürich and its development over the years
+
+\
+
+### Daily development of Carbon Monoxide and Nitrogen Oxides
+
+```{r plot_air, echo=FALSE, echo=FALSE, fig.show="hold", fig.height=3, out.width="90%", fig.align='center', fig.cap = "Fig. nnn: Daily CO and NOx"}
 
 #melt data frame into long format
-air.plot <- melt(air.co,  id.vars = "Date")
+air.co.plot <- melt(air.co,  id.vars = "Date")
 #create line plot for each column in data frame
-ggplot(air.plot, aes(Date, value), group = 5) +
-  geom_line(aes(colour = variable))
+g1 <- ggplot(air.co.plot, aes(Date, value), group = 5) +
+  geom_line(aes(colour = variable), show.legend = FALSE) +
+  scale_color_manual(values=c('blue')) +
+  labs(title = "Daily Carbon Monoxide [mg/m3]", 
+       x = "Date", y = "mg/m3") +
+    geom_smooth(se = FALSE, color = "red", size=0.5)
+
+#melt data frame into long format
+air.nox.plot <- melt(air.NOx,  id.vars = "Date")
+#create line plot for each column in data frame
+g2 <- ggplot(air.nox.plot, aes(Date, value), group = 5) +
+  geom_line(aes(colour = variable), show.legend = FALSE) +
+  scale_color_manual(values=c('blue')) +
+    labs(title = "Daily Nitrogen Oxides [ppb]", 
+       x = "Date", y = "ppb") +
+  geom_smooth(se = FALSE, color = "red", size=0.5)
+# se=FALSE removes confidence bands
+
+grid.arrange(g1, nullGrob(), g2, widths=c(0.45,0.1,0.45))
+```
+
+A first visual inspection of carbon monoxide and nitrogen oxides as illustrated in figure nnn shows a reduction of both, CO and NOx, as of 1983 up to 2022. The trend line in red shows a significant improvement especially in the Eighties and early Nineties. 
+It is unlikely that trees are the only factor influencing this improvement. Rather other factors such as new laws and regulations play a major role. In addition, in this timeframe, the cars were equipped with catalysts which mainly reduce carbon monoxide, hydrocarbon and nitrogen oxyds. 
+Searching the internet for explanations to which we could refer didn't lead to any results, as most time series only start as of 1990. 
+Additional potential influencing factors are mentioned in nnn.
+
+\
+\
+--> hier die Referenz auf Loopy Kapitel
+\
+\
+
+The same data depicted as boxplots and summarized per year confirms the improvement of air quaility as well as the trend and the maximum values.
+
+```{r air.boxplots, echo=FALSE, fig.show="hold", out.width="45%", fig.align='center', fig.cap = "Fig. nnn: CO and NOx per year"}
+
+# Boxplots for CO all over Zürich
+boxplot(Wert ~ Jahr, data = air, subset = Parameter %in% names(table("CO")),
+        main= "CO in Zürich per Year [mg/m3]",
+        xlab = "Year", ylab = "mg/m3")
+boxplot(Wert ~ Jahr, data = air, subset = Parameter %in% names(table("NOx")),
+        main= "NOx in Zürich per Year [ppb]",
+        xlab = "Year", ylab = "ppb")
 
 ```
 
-```{r air.means, echo=TRUE}
 
+
+```{r air.means, eval=FALSE, echo=FALSE}
 air.means = air %>% 
   filter(!is.na(Wert)) %>% 
   group_by(Parameter, Jahr) %>%
@@ -237,9 +291,7 @@ air.means = air %>%
 
 ```
 
-The following graphs show the development over time for some specific air pollutants as of 1983.
-
-```{r air_mean_line_graphs, echo=FALSE, fig.show="hold", out.width="33%", fig.cap = "Fig. nnn: Carbon monoxide and particulate matter"}
+```{r air_mean_line_graphs, eval=FALSE, echo=FALSE, fig.show="hold", out.width="33%", fig.cap = "Fig. nnn: Carbon monoxide and particulate matter"}
 plot(subset(air.means, Parameter == "CO", 
             c(Jahr, Mean)), type = "l",
      main = "Mean of CO per Year [mg/m3]")  
@@ -253,10 +305,9 @@ plot(subset(air.means, Parameter == "PM2.5",
      main = "Mean of PM2.5 per Year [mg/m3]") 
 ```
 
-Figure nnn above on the left hand shows the mean amount of carbon monoxide per year as of 1983. The average could be reduced to a large extent until 1990, but we couldn't find a explanation in the internet to which we could refer, as most time series only start as of 1990. We assume that this is - besides other potential influencing factors - a direct impact of the implementation of catalysts in the cars, which should reduce carbon monoxide, hydrocarbon and nitrogen oxyds. The two graphs on the right side show two different sizes of particulate matter, for which we only have data as of 2017 for the very small particulate matter PM2.5. We can observe in the two graphs an improvement over the years as well.  
+<!--- Figure nnn above on the left hand shows the mean amount of carbon monoxide per year as of 1983. The average could be reduced to a large extent until 1990, but we couldn't find a explanation in the internet to which we could refer, as most time series only start as of 1990. We assume that this is - besides other potential influencing factors - a direct impact of the implementation of catalysts in the cars, which should reduce carbon monoxide, hydrocarbon and nitrogen oxyds. The two graphs on the right side show two different sizes of particulate matter, for which we only have data as of 2017 for the very small particulate matter PM2.5. We can observe in the two graphs an improvement over the years as well.  --->
 
-
-```{r air_mean_no_line_graphs, echo=TRUE, fig.show="hold", out.width="33%"}
+```{r air_mean_no_line_graphs, eval=FALSE, echo=FALSE, fig.show="hold", out.width="33%"}
 plot(subset(air.means, Parameter == "NO", 
             c(Jahr, Mean)), type = "l",
      main = "Mean of NO per Year [µg/m3]")
@@ -276,14 +327,7 @@ plot(subset(air.means, Parameter == "NOx",
 
 ```
 
-
-Nitric Oxide
-Nitrogen dioxide
-Nitrogen oxides
-
-
-
-```{r next_air_mean_o_line_graphs, echo=FALSE, fig.show="hold", out.width="33%"}
+```{r next_air_mean_o_line_graphs, eval=FALSE, echo=FALSE, fig.show="hold", out.width="33%"}
 plot(subset(air.means, Parameter == "O3", 
             c(Jahr, Mean)), type = "l",
      main = "Mean of O3 per Year [µg/m3]") 
@@ -298,8 +342,7 @@ plot(subset(air.means, Parameter == "O3_nb_h1>120",
 
 ```
 
-
-```{r next_air_mean_rest_line_graphs, echo=FALSE, fig.show="hold", out.width="50%", fig.align='center'}
+```{r next_air_mean_rest_line_graphs, eval=FALSE, echo=FALSE, fig.show="hold", out.width="33%", fig.align='center'}
 plot(subset(air.means, Parameter == "PN",
             c(Jahr, Mean)), type = "l",
      main = "Mean of PN per Year [1/cm3]") 
@@ -310,18 +353,13 @@ plot(subset(air.means, Parameter == "SO2",
 
 ```
 
-One can see that the both the "NOx" and the "CO" graph show that the air quality has improved significantly since 1980. It is unlikely to say the least that trees are the only factor in this improvement. More likely other factors such as new laws and regulations in regards to catalysts of cars are more likely the major factor.
+\  
 
+### Difference of Nitrogen Oxides per measuring station
 
-```{r air.boxplots, echo=TRUE}
+\
 
-# Boxplots for CO all over Zürich
-boxplot(Wert ~ Jahr, data = air, subset = Parameter %in% names(table("CO")),
-        main= "CO in Zürich (Stampfenbachstrasse) per Year [mg/m3]",
-        xlab = "Year", ylab = "mg/m3")
-boxplot(Wert ~ Jahr, data = air, subset = Parameter %in% names(table("NOx")),
-        main= "NOx in Zürich per Year [ppb]",
-        xlab = "Year", ylab = "ppb")
+```{r air.boxplots.station, echo=FALSE, fig.show="hold", out.width="33%", fig.align='center', fig.cap = "Fig. nnn: Nitrogen oxides per monitoring station"}
 
 # Boxplots for NOx per monitoring station
 #air.he <- air %>% filter(Standort == "Zch_Heubeeribüel")
@@ -332,36 +370,171 @@ air.st <- air %>% filter(Standort == "Zch_Stampfenbachstrasse")
 # boxplot(Wert ~ Jahr, data = air.he, subset = Parameter %in% names(table("NOx")),
 #         main= "NOx at Heubeeribuel per Year [ppb]",
 #         xlab = "Year", ylab = "ppb")
-boxplot(Wert ~ Jahr, data = air.ro, subset = Parameter %in% names(table("NOx")),
-        main= "NOx at Rosengartenstrasse per Year [ppb]",
+boxplot(Wert ~ Jahr, data = air.st, subset = Parameter %in% names(table("NOx")),
+        main= "NOx at Stampfenbachstrasse per Year [ppb]",
         xlab = "Year", ylab = "ppb")
 boxplot(Wert ~ Jahr, data = air.sc, subset = Parameter %in% names(table("NOx")),
         main= "NOx at Schimmelstrasse per Year [ppb]",
         xlab = "Year", ylab = "ppb")
-boxplot(Wert ~ Jahr, data = air.st, subset = Parameter %in% names(table("NOx")),
-        main= "NOx at Stampfenbachstrasse per Year [ppb]",
+boxplot(Wert ~ Jahr, data = air.ro, subset = Parameter %in% names(table("NOx")),
+        main= "NOx at Rosengartenstrasse per Year [ppb]",
         xlab = "Year", ylab = "ppb")
+```
+
+Nitrogen Oxides have been registered at three different measuring stations. The values differ as the measuring stations have different settings, for example  main traffic axis, 6 m distance to the street (Rosengartenstrasse) or moderately frequented road in residential area, 3 m distance to the street (Schimmelstrasse).
+
+Further details on measuring stations:  
+Stampfenbachstrasse: https://zueriluft.ch/airmo/frontend/station.php?ID=8  
+Schimmelstrasse: https://zueriluft.ch/airmo/frontend/station.php?ID=6  
+Rosengartenstrasse: https://zueriluft.ch/airmo/frontend/station.php?ID=11  
+
+\
+
+The analysis done in the following chapters is based on the measurements at Stampfenbachstrasse as this data is going back to 1983.
+
+\
+
+## Temperature trends
+
+\
+
+As a first exploratory data analysis we do not look into the development of temperature in general as we will have a detailed insight in the Analysis chapter, we rather look at the evolvement of the maximum and minimum temperature over time.
+
+```{r temperature_trends_0, eval = FALSE, echo=FALSE, fig.show="hold", out.width="33%", fig.cap = "Fig. nnn: Temperature trends of maximum and minimum values"}
+
+# Temperaturentwicklung
+meteo.temp <- meteo.extr %>%
+  filter(Standort == "Zch_Stampfenbachstrasse") %>%
+  filter(Parameter == "T") %>%
+  select(Date, Wert) %>%
+  mutate(Date = as.Date(Date, format = "%Y-%m-%d"))
+
+ ggplot(data=subset(meteo.temp, !is.na(Wert)), aes(x = Date, y = Wert)) +
+   geom_line() +
+   ggtitle("Temperature at Stampfenbachstrasse") +
+   geom_smooth(se = FALSE, color = "blue", size=0.5)
+```
+
+```{r temperature_trends, echo=FALSE, fig.show="hold", out.width="33%", fig.cap = "Fig. nnn: Temperature trends of maximum and minimum values"}
+
+# Stampfenbach max of mean of daily temperature with trendline
+meteo.sta <- meteo.extr %>%
+  filter(Standort == "Zch_Stampfenbachstrasse") %>%
+  filter(Parameter == "T") %>%
+  group_by(Jahr, Parameter) %>%
+  summarize(Max = max(Wert, na.rm = TRUE), .groups = "drop")
+
+ggplot(meteo.sta, aes(x = Jahr, y = Max)) +
+  geom_line() +
+  ggtitle("Maximum of mean temperature at Stampfenbachstrasse") +
+  geom_smooth(method = "lm", se = FALSE)
+
+# Stampfenbach min of mean of daily temperature with trendline
+meteo.sta.min <- meteo.extr %>%
+  filter(Standort == "Zch_Stampfenbachstrasse") %>%
+  filter(Parameter == "T") %>%
+  group_by(Jahr, Parameter) %>%
+  summarize(Min = min(Wert, na.rm = TRUE), .groups = "drop")
+
+ggplot(meteo.sta.min, aes(x = Jahr, y = Min)) +
+  geom_line() +
+  ggtitle("Minimum of mean temperature at Stampfenbachstrasse") +
+  geom_smooth(method = "lm", se = FALSE)
+
+# Stampfenbach max of max temperature with trendline
+meteo.sta.max <- meteo.extr %>%
+  filter(Standort == "Zch_Stampfenbachstrasse") %>%
+  filter(Parameter == "T_max_h1") %>%
+  group_by(Jahr, Parameter) %>%
+  summarize(Max = max(Wert, na.rm = TRUE), .groups = "drop")
+
+ggplot(meteo.sta.max, aes(x = Jahr, y = Max)) +
+  geom_line() +
+  ggtitle("Maximum daily temperature at Stampfenbachstrasse") +
+  geom_smooth(method = "lm", se = FALSE)
 
 ```
 
-```{r tree_pflanzjahr, echo=TRUE}
+The temperatures we have in our data set are daily means. In the left graph in figure nnn we look at the text text
 
-# bar chart pflanzjahr alle
-ggplot(d.trees, aes(x = pflanzjahr)) +
-  geom_bar() +
-  labs(title="Trees per year planted")
+shows the yearly development of the max of the daily means .
+
+
+
+```{r temperature_lm, echo=TRUE}
+summary(lm(meteo.sta$Max ~ meteo.sta$Jahr))$coefficients
+summary(lm(meteo.sta.min$Min ~ meteo.sta.min$Jahr))$coefficients
+summary(lm(meteo.sta.max$Max ~ meteo.sta.max$Jahr))$coefficients
+```
+
+```{r global_radiation, eval=FALSE, echo=FALSE}
+
+# Stampfenbach mean of Globalstrahlung with trendline
+meteo.sta.glo <- meteo.extr %>%
+filter(Standort == "Zch_Stampfenbachstrasse") %>%
+  filter(Parameter == "StrGlo") %>%
+  group_by(Jahr, Parameter) %>%
+  summarize(Max = max(Wert, na.rm = TRUE), .groups = "drop")
+
+ggplot(meteo.sta.glo, aes(x = Jahr, y = Max)) +
+  geom_line() +
+  ggtitle("Development of mean of global radiation at Stampfenbachstrasse") +
+  geom_smooth(method = "lm", se = FALSE)
+summary(lm(meteo.sta.glo$Max ~ meteo.sta.glo$Jahr))
+```
+
+\
+
+## Trees in Zürich and their development over the years
+
+\
+
+```{r tree_pflanzjahr, echo=FALSE, fig.show="hold", out.width="33%", fig.cap = "Fig. nnn: Year of planting and crown diameter"}
+
+# # bar chart pflanzjahr alle
+# ggplot(d.trees, aes(x = pflanzjahr)) +
+#   geom_bar() +
+#   labs(title="Trees per year planted", 
+#       x = "Year of planting", y = "Number of trees")
+
 # bar chart nur neuere pflanzjahre
-ggplot(d.trees[trees$pflanzjahr > 1949, ], aes(x = pflanzjahr)) +
+ggplot(d.trees[d.trees$pflanzjahr > 1949, ], aes(x = pflanzjahr)) +
   geom_bar() +
-  labs(title="Trees planted as of 1950")
+  labs(title="Trees planted as of 1950", 
+       x = "Year of planting", y = "Number of trees")
+
+ggplot(subset(d.trees, pflanzjahr > 1949 & pflanzjahr < 2021), 
+       aes(x = pflanzjahr)) +
+  geom_histogram(binwidth = 10) +
+  labs(title="Sum of trees (10 years) planted as of 1950", 
+       x = "Year of planting", y = "Number of trees")
 
 # bar chart kronendurchmesser
 ggplot(d.trees, aes(x = kronendurchmesser)) +
   geom_bar() +
-  labs(title="Number of trees per crown diameter")
+  labs(title="Number of trees per crown diameter", 
+       x = "Crown diameter [m]", y = "Number of trees")
 
 ```
-As one can see there is a trend to planting more trees in Zürich. However, there are also quite a few outliers visible in the graph. These outliers can usually be explained quite easily with replanting efforts. For example in 2000 a larger number of trees than normal were planted as replacements for all the trees that were blown down or had to be cut down because of cyclone Lothar in December of 1999.
+
+The two graphs in figure nnn on the left side show the numbers of trees planted per year as of 1950. The graph on the left side reflects our data on a yearly basis as we get it from our data set. As in earlier years the number of plantings were mainly summarized every five years, the middle bar chart shows a more consistent view by grouping 10 years into one bar.
+
+Planted trees include both, additional trees and replacements. There were a number of extraordinary environmental influences in recent years, such as cyclone Lothar in December 1999, 
+or the heavy snow fall in January 2021 and storm Bernd in July 2021 which damaged more than 2'000 trees on public ground in such a way that they had to be cut down. Replanting of those 2'000 trees will take time until the year 2025.
+https://www.stadt-zuerich.ch/ted/de/index/departement/medien/medienmitteilungen/2021/oktober/211007a.html
+
+\
+
+## Remark on trees on private ground    
+\
+The City of Zürich is continuously planting trees on public ground as the awareness that trees are an effective measure to reduce heat in the city has become a common understanding. But if we broaden our view and take also the private ground into consideration, we get a different picture. 
+Half of the area of the tree crowns is on private ground and those are disappearing in such a pace, that the overall population of trees is decreasing as well.   
+(https://www.tagesanzeiger.ch/die-stadt-will-ihre-krone-vergroessern-362720147046)
+
+\
+
+
+
 
 ## Analysis
 Having gained an overview of the data, we would now like to analyse the data in more detail using a few different methodologies.
@@ -545,80 +718,8 @@ ccf(residuals(tb_tree_ts), residuals(tb_temp_ts),
 
 Now one can see the correlations between the sum of trees and air quality (CO and NOx) as well as the correlation between the sum of trees and temperature. The graphs shows no strong correlations, although a slightly significant correlation with a lag is visible for amount of trees on air quality. Meaning that after a some time a larger amount of trees could have an influence in reducing Carbon monoxide and Nitrogen oxide in the air. 
 
-## Temperature trends
 
 
-
-```{r temperature_trends, echo=TRUE, fig.cap = "Fig. 1: temperature trends"}
-
-# Stampfenbach max of mean of daily temperature with trendline
-meteo.sta <- meteo.extr %>%
-  filter(Standort == "Zch_Stampfenbachstrasse") %>%
-  filter(Parameter == "T") %>%
-  group_by(Jahr, Parameter) %>%
-  summarize(Max = max(Wert, na.rm = TRUE), .groups = "drop")
-
-ggplot(meteo.sta, aes(x = Jahr, y = Max)) +
-  geom_line() +
-  ggtitle("Development of maximum of mean temperature at Stampfenbachstrasse") +
-  geom_smooth(method = "lm", se = FALSE)
-
-# Stampfenbach min of mean of daily temperature with trendline
-meteo.sta.min <- meteo.extr %>%
-  filter(Standort == "Zch_Stampfenbachstrasse") %>%
-  filter(Parameter == "T") %>%
-  group_by(Jahr, Parameter) %>%
-  summarize(Min = min(Wert, na.rm = TRUE), .groups = "drop")
-
-ggplot(meteo.sta.min, aes(x = Jahr, y = Min)) +
-  geom_line() +
-  ggtitle("Development of minimum of mean temperature at Stampfenbachstrasse") +
-  geom_smooth(method = "lm", se = FALSE)
-
-```
-
-The left graph in Fig. nn shows the yearly development of the max of the daily means .
- 
-
-
-```{r temperature_trends_max, echo=TRUE, fig.cap = "Fig. 1: Text"}
-###
-# Stampfenbach max of max temperature with trendline
-meteo.sta.max <- meteo.extr %>%
-  filter(Standort == "Zch_Stampfenbachstrasse") %>%
-  filter(Parameter == "T_max_h1") %>%
-  group_by(Jahr, Parameter) %>%
-  summarize(Max = max(Wert, na.rm = TRUE), .groups = "drop")
-
-ggplot(meteo.sta.max, aes(x = Jahr, y = Max)) +
-  geom_line() +
-  ggtitle("Development of maximum daily temperature at Stampfenbachstrasse") +
-  geom_smooth(method = "lm", se = FALSE)
-
-```
-
-
-```{r temperature_lm, echo=TRUE}
-summary(lm(meteo.sta$Max ~ meteo.sta$Jahr))
-summary(lm(meteo.sta.min$Min ~ meteo.sta.min$Jahr))
-summary(lm(meteo.sta.max$Max ~ meteo.sta.max$Jahr))
-```
-
-```{r global_radiation, echo=TRUE}
-
-# Stampfenbach mean of Globalstrahlung with trendline
-meteo.sta.glo <- meteo.extr %>%
-filter(Standort == "Zch_Stampfenbachstrasse") %>%
-  filter(Parameter == "StrGlo") %>%
-  group_by(Jahr, Parameter) %>%
-  summarize(Max = max(Wert, na.rm = TRUE), .groups = "drop")
-
-ggplot(meteo.sta.glo, aes(x = Jahr, y = Max)) +
-  geom_line() +
-  ggtitle("Development of mean of global radiation at Stampfenbachstrasse") +
-  geom_smooth(method = "lm", se = FALSE)
-summary(lm(meteo.sta.glo$Max ~ meteo.sta.glo$Jahr))
-```
 
 ## Tableau Dashboards
 
