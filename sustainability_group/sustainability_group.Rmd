@@ -622,8 +622,20 @@ summary(lm(meteo.sta.glo$Max ~ meteo.sta.glo$Jahr))
 
 ## Tableau Dashboards
 
+To aid us in our geospatial analysis and to potentially communicate some of our findings to a broader public, we have created a Tableau dashboard. 
+Below you can find a screenshot of one of the visualizations in our dashboard. To explore the full interactive dashboard, please follow the following link.
 
 ![Target Picture](../images/tableau_trees_total.png)  
+For the dashboard, some additional data wrangling was done. Furthermore the dataset had to be expanded and missing values needed to be added to create a smoother dashboard experience.
+
+```{r Tableau data wrangling, echo=False, fig.cap = "Fig. 1: Text"}
+###
+
+
+```
+
+
+
 
 ## Conclusions and findings
 
