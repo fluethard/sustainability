@@ -628,7 +628,7 @@ Below you can find a screenshot of one of the visualizations in our dashboard. T
 ![Target Picture](../images/tableau_trees_total.png)  
 For the dashboard, some additional data wrangling was done. Furthermore the dataset had to be expanded and missing values needed to be added to create a smoother dashboard experience.
 
-```{r Tableau data wrangling, echo=False, fig.cap = "Fig. 1: Text"}
+```{r Tableau data wrangling, echo=F}
 ###
 library(tidyverse)      # select
 library(ggplot2)    # ggplot
