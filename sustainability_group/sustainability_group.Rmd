@@ -678,15 +678,15 @@ tree_year_sum <- tree_year %>%
   mutate(cum_crown = cumsum(crown_sum))
 
 
-plot(tree_ts)
+#plot(tree_ts)
 
 # TO DO
 # Stitch Trees + Air + Temp
 # Lora Sensor Data
 # Tableau
 
-tree_year_sum %>%
-  ggplot(mapping = aes(x = pflanzjahr, y = cum_crown)) + geom_line()
+#tree_year_sum %>%
+# ggplot(mapping = aes(x = pflanzjahr, y = cum_crown)) + geom_line()
 
 
 tree_year_quartier <- d.trees %>%
@@ -702,7 +702,6 @@ tree_year_quartier_sum <- tree_year_quartier %>%
 
 year_list <- do.call(seq, as.list(range(c(1983, 2023))))
 
-tree_year_quartier$pflanzjahr
 
 tree_year_quartier2 <- tree_year_quartier %>%
   ungroup(pflanzjahr) %>%
