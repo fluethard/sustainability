@@ -21,7 +21,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # TREES  -  TREES  -  TREES
 
 ## Introduction
-Sustainability offers a variety of challenges and opportunities in regard to data science. More and more data is available from around the global in regards to sustainability and each regions has its on challenges with sustainability. However, for this project we will focus on a problem that is more local to us. We are going to analyse the impact trees have on our everyday lives in regards to temperature and air quality.
+Vegetative cooling, or using plants to shield urban environments from the sun’s radiation, has been somewhat of a hot topic in recent years. While there has been ample research on the hyper-local effect to reduce or even eliminate heat islands, our research focuses on the question of whether or not we can identify the effect of the efforts of urban vegetative cooling in the city of Zurich on a larger scale. Furthermore, we investigate if there is any correlation with different factors in regards to air quality.
 
 
 ## Goal of the project
