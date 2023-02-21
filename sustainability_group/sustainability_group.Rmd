@@ -37,8 +37,9 @@ Scope & limitations
 Our data sets are limited to the trees planted by garden and forestation services of the municipality of Zurich, and only include roadside and park trees. The effect of local de- or reforestation thus cannot be accounted for. Furthermore, temperature data was taken from roadside stations that could themselves potentially be located within heat islands.
 Furthermore, as our analysis moves beyond a micro-scale, there are many more factors that we cannot control for, both on the local and macro-environmental level.
 A factor that we did not control for, which could have large implications on the macro scale of temperature, is the potential disappearance of undeveloped land and urban expansion. Additionally, an analysis of building materials used was also out of the scope of this analysis.
+To visualize the scope and limitations of our project, we have created a systems view that can be seen below.
 
-
+![Systems View](../images/loopy.gif)
 
 ### Stakeholders
 To ensure we include all potential stakeholders in our project at the appropriate level we create the following stakeholder map: 
@@ -624,8 +625,11 @@ summary(lm(meteo.sta.glo$Max ~ meteo.sta.glo$Jahr))
 
 ## Conclusions and findings
 
+Based on our data, there is no correlation between the number of trees planted in a given district in the city of Zurich and the temperature on a macro scale.
 
 ## Outlook and next steps
 While we did manage to get some very insightful and interesting results, we did also come across some issues, mostly with the data availability and quality. It would be useful to collect more data from across the different districts in Zürich. It would also be helpful if that data would be completely available across a time-frame of at least 20 years. This would allow for creating a more complete picture and better comparisons among districts. Another possibility would be take a closer look at some of the outliers using Extreme Value Theory (EVT). A further approach would be to create a simulation. While this would obviously involve a lot more effort, it would allow to simulate potential scenarios and could thus help city planners and politicians to make more informed policy decisions.  
+
+Further research questions could take a more micro-scope and evaluate the temperature on both a micro and macro scale. Especially interesting would be an evaluation to calculate or simulate the amount of vegetative cooling to reach a critical mass that makes the efforts observable on a macro level. In our opinion, it would be useful to not only include trees, as our 
 
 
