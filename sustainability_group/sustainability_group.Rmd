@@ -623,6 +623,8 @@ summary(lm(meteo.sta.glo$Max ~ meteo.sta.glo$Jahr))
 ## Tableau Dashboards
 
 
+![Target Picture](../images/tableau_trees_total.png)  
+
 ## Conclusions and findings
 
 Based on our data, there is no correlation between the number of trees planted in a given district in the city of Zurich and the temperature on a macro scale.
