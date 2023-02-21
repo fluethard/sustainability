@@ -22,18 +22,10 @@ tree_quartier <- d.trees %>%
   summarise(count = n())
 
 
-#summarise CO2 by year
-yearly_air <- air %>%
-  add_column(year = lubridate::year(air$Datum))
-
-yearly_aq <- yearly_air %>%
-  #dplyr::select(year, CO) %>%
-  group_by(year) %>%
-  summarise(mean_co = mean(CO, na.rm = T), mean_no2 = mean(NO2, na.rm = T), mean_no = mean(NO, na.rm = T), mean_nox = mean(NOx, na.rm = T), mean_so2 = mean(SO2, na.rm = T))
 
 # sum of trees
 tree_ts_sum <- tree_ts %>%
- mutate(sum_trees = cumsum(count))
+  mutate(sum_trees = cumsum(count))
 
 
 # Trees by district, year
@@ -87,10 +79,36 @@ tree_year_quartier2 <- tree_year_quartier %>%
   expand(quartier, year_list) %>%
   rename(pflanzjahr = year_list) %>%
   full_join(tree_year_quartier, by = c('pflanzjahr', 'quartier')) %>%
-  arrange(pflanzjahr, quartier) %>%
-  fill(tree_count, crown_sum)
+  arrange(quartier, pflanzjahr) %>%
+  filter(pflanzjahr > 1982) %>%
+  mutate(tree_count = replace_na(tree_year_quartier2$tree_count, 0))
+
+tree_year_quartier2$tree_sum <- 0
+
+
+
+for (x in 2:length(tree_year_quartier2$quartier)) {
+  if (tree_year_quartier2$quartier[x] == tree_year_quartier2$quartier[x-1]) {
+    tree_year_quartier2$tree_sum[x] <- tree_year_quartier2$tree_count[x] + tree_year_quartier2$tree_sum[x-1]
+  } else {
+    tree_year_quartier2$tree_sum[x] <- tree_year_quartier2$tree_count[x]
+  }
+}
 
 write_csv(tree_year_quartier2, 'tree_year_quartier_for_tableau.csv')
+
+
+#summarise CO2 by year
+yearly_air <- air %>%
+  add_column(year = lubridate::year(air$Datum))
+
+yearly_aq <- yearly_air %>%
+  #dplyr::select(year, CO) %>%
+  group_by(year) %>%
+  summarise(mean_co = mean(CO, na.rm = T), mean_no2 = mean(NO2, na.rm = T), mean_no = mean(NO, na.rm = T), mean_nox = mean(NOx, na.rm = T), mean_so2 = mean(SO2, na.rm = T))
+
+
+
 
 
 merged_temp <- read_csv("/Users/fluethard/hslu/sustainability/git/sustainability/datasets/merged_temp.csv")
@@ -127,7 +145,7 @@ temp_station <- merged_temp %>%
 
 write_csv(temp_station, 'temp_station_for_tableau.csv')
 
-write_csv(tree_year_quartier, 'tree_year_quartier_for_tableau.csv')
+
 
 
 temp_by_station_2022 <- merged_temp %>%
