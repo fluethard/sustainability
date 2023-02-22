@@ -34,7 +34,7 @@ To clarify our project goal and narrow it down we drew the following picture:
 It shows two potential futures for Zürich. One with more green spaces and one with more urban wasteland. The idea of the project is to find out how much the trees and green spaces actually impact the city of Zürich in regard to temperature and air pollution. 
 
 Scope & limitations
-Our data sets are limited to the trees planted by garden and forestation services of the municipality of Zurich, and only include roadside and park trees. The effect of local de- or reforestation thus cannot be accounted for. Furthermore, temperature data was taken from roadside stations that could themselves potentially be located within heat islands.
+Our data sets are limited to the trees planted by garden and forestation services of the municipality of Zurich (Grün Stadt Zürich), and only include roadside and park trees. The effect of local de- or reforestation thus cannot be accounted for. Furthermore, temperature data was taken from roadside stations that could themselves potentially be located within heat islands.
 Furthermore, as our analysis moves beyond a micro-scale, there are many more factors that we cannot control for, both on the local and macro-environmental level.
 A factor that we did not control for, which could have large implications on the macro scale of temperature, is the potential disappearance of undeveloped land and urban expansion. Additionally, an analysis of building materials used was also out of the scope of this analysis.
 To visualize the scope and limitations of our project, we have created a systems view that can be seen below.
@@ -64,13 +64,19 @@ Number of rows: 283'763
 Number of variables: 8 (most important: date, location, type of measurement, value)   
 Source: https://data.stadt-zuerich.ch/dataset/ugz_luftschadstoffmessung_stundenwerte  
 
-### Meteo
+### Meteo 1 (Zurich City)
 Format: csv  
 Number of rows: 4'747  
 Number of variables: 17 (most important: date, temperature, location)   
-Source: https://opendata.swiss/de/dataset/taglich-aktualisierte-meteodaten-seit-1992   
+Source: https://opendata.swiss/de/dataset/taglich-aktualisierte-meteodaten-seit-1992  
 
-### Tree cadastre
+### Meteo 2 (Fluntern Reference Station)
+Format: csv  
+Number of rows: 15706 
+Number of variables: 20 (most important: date, temperature, location)   
+Source: https://gate.meteoswiss.ch/idaweb
+
+### Tree Cadastre
 Format: csv  
 Number of rows: 36'239  
 Number of variables: 17 (most important: year of  planting, diameter of crown, 
