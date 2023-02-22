@@ -84,6 +84,7 @@ air.wide <- air %>%
   select(c("Datum", "Parameter", "Wert")) %>%
   pivot_wider(id_cols = "Datum", names_from = "Parameter", values_from = "Wert") 
 
+# untenstehend geht nicht mehr
 meteo <- meteo %>% 
   pivot_wider(id_cols = "Datum",names_from = "Parameter",values_from = "Wert")
 
@@ -108,6 +109,7 @@ air.plot.long <- melt(air,  id.vars = "Datum")
 # ggplot(air.plot.long, aes(Datum, value), group = 11) +
 #   geom_line(aes(colour = variable))
 
+# untenstehend geht nicht mehr
 plot(air$CO, type = "l")
 plot(air$NOx, type = "l")
 
@@ -181,7 +183,7 @@ plot(subset(air.means, Parameter == "SO2",
 #------------------------------------------------------------------------------#
 # Nützliche Übersichten
 table(air$Standort)
-table(air.he$Parameter)
+#table(air.he$Parameter)
 table(air.ro$Parameter)
 table(air.sc$Parameter)
 table(air.st$Parameter)
@@ -324,3 +326,18 @@ summary(lm(meteo.sta.glo$Max ~ meteo.sta.glo$Jahr))
 
 
 # Globalstrahlung
+
+
+meteo.temp <- meteo.extr %>%
+  filter(Standort == "Zch_Stampfenbachstrasse") %>%
+  filter(Parameter == "T") %>%
+  select(Date, Wert)
+meteo.temp$Date <- format(as.Date(meteo.temp$Date), format = "%Y-%m-%d")
+
+ggplot(meteo.temp, aes(x = Date, y = Wert)) +
+  geom_line(aes(colour = Wert), show.legend = FALSE) +
+  ggtitle("Temperature at Stampfenbachstrasse")
+
+
+
+
