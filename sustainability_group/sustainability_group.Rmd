@@ -698,12 +698,16 @@ Now one can see the correlations between the sum of trees and air quality (CO an
 
 ## Tableau Dashboards
 
-To aid us in our geospatial analysis and to potentially communicate some of our findings to a broader public, we have created a Tableau dashboard. 
-The first visualization shows that
+To aid us in our geospatial analysis and to potentially communicate some of our findings to a broader public, we have created a Tableau dashboard that acts as a prototype. Not all visualizations that we have explored made it into the prototype, and we only kept what might provided an added benefit to the rest of the analysis presented here. We have kept three panels in the dashboard (or rather Tableau "story").
+
+The first visualization shows the cumulative development of new trees planted by Grün Stadt Zürich since 1983.
+For the second visualization, we only kept the districts where we also had temperature measurement stations. In addition to the number of trees planted (shaded in green), we constrasted the average temperature (blue circles). With this visualizations the user can explore the slight temperature differences between the districts.
+In the third visualization, we included our secondary topic of interest, which is air quality. Here we contrasted the development of NOx levels and temperature.
 
 Below you can find a screenshot of one of the visualizations in our dashboard. To explore the full interactive dashboard, please follow the following link.
 
 ![Target Picture](../images/tableau_trees_total.png)  
+
 For the dashboard, some additional data wrangling was done. Furthermore the dataset had to be expanded and missing values needed to be added to create a smoother dashboard experience.
 
 ```{r Tableau_data_wrangling, echo=FALSE, fig.cap = "Fig. 1: Text"}
