@@ -3,13 +3,13 @@ title: "sustainability_group3 - Trees"
 date: "2023-02-06"
 author: "Fabian Lüthard, Elisabeth Freimann, Simon Kohler"
 output:
+  pdf_document:
+    toc: yes
   html_document:
     df_print: paged
     toc: yes
     theme: united
     number_sections: yes
-  pdf_document:
-    toc: yes
   word_document:
     toc: yes
 ---
@@ -855,7 +855,6 @@ temp_by_station_2022 <- merged_temp %>%
   
 temp_fluntern <- read.csv('/Users/fluethard/hslu/sustainability/git/sustainability/datasets/temp_fluntern.csv', sep = ';')
 
-read.csv
 
 ref_temp_fluntern <- temp_fluntern %>%
   dplyr::select(stn, time, ths200dx, ths200d0)
