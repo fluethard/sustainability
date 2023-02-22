@@ -47,7 +47,7 @@ To ensure we include all potential stakeholders in our project at the appropriat
 
 ![Stakeholders](../images/Stakeholders.png)
 
-We sorted them into three possible categories: "direct", "indirect", "unintended". Our main target is to work together with Grüne Stadt Zürich an convince the politicians, the goverment and urban planners on the benefits of a greener city.
+We sorted them into three possible categories: "direct", "indirect", "unintended". Our main target is to work together with Grüne Stadt Zürich and convince the politicians, the government and urban planners on the benefits of a greener city. Indirectly involved would be street sweepers, who have to deal with more leafs etc on the streets, and tree farms, who would be relied upon to provide the trees. The stakeholder map list further stakeholders who need to be considered if the proposed changes would be implemented. It is also very possible and even likely that additional stakeholders will have to be considered during the project. 
 
 
 ## Big Picture: Embedding in the Sustainable Development Goals (SDG)
@@ -548,7 +548,7 @@ Having gained an overview of the data, we would now like to analyse the data in 
 
 ### Timeseries Analysis
 In this section we are trying to see if there is a correlation over time between the amount of trees and the air quality or temperature. For this we use timeseries analysis, meaning we need to convert our data into timeseries objects. After transforming them we can then look at the decomposition of the objects. Thus we are able to see trends, seasonality and residuals. However the seasonality is only visible for air pollution and temperature, as the tree information is only available on a yearly basis. 
-```{r time_meteo, echo=TRUE}
+```{r time_meteo, echo=TRUE, fig.show="hold", out.width="33%", fig.cap = "Fig. nnn: Temperature timeseries"}
 
 meteo %<>% complete(Date=seq.Date(min(Date), max(Date), by='day'))
 
@@ -560,7 +560,6 @@ temp <-
   na_replace(fill=0)
 
 # Stationarity test and decomposition
-# adf.test(temp,k=0)
 temp_comp=decompose(temp)
 plot(temp_comp)
 title(sub = "Temperature")
@@ -585,8 +584,6 @@ tb_temp_ts <- tbats(temp_yr)
 # Differ
 ## twice-difference the CO2 data
 temp_d2 <- diff(temp, differences = 1)
-## plot the differenced data
-# plot(temp_d2, ylab = "Temperature without trend")
 
 ## difference the differenced CO2 data
 temp_d2d12 <- diff(temp_d2, lag = 12)
@@ -596,7 +593,7 @@ plot(temp_d2d12, ylab = "Temperature without trend and seasonality")
 ```
 Generally we can see that the temperature is slightly rising over time. There is a slight upwards trend noticeable and it is also important to remember how much danger a temperature increase of just one percent can be for the biodiversity. 
 
-```{r time_air, echo=TRUE}
+```{r time_air, echo=TRUE,fig.show="hold", out.width="50%", fig.cap = "Fig. nnn: Air Quality timeseries"}
 
 air.short %<>% complete(Date=seq.Date(min(Date), max(Date), by='day'))
 
@@ -616,20 +613,11 @@ NOx <-
 # adf.test(NOx,k=0)
 co_comp=decompose(co)
 NOx_comp=decompose(NOx)
-# plot(co_comp)
-# title(sub = "CO")
-# plot(NOx_comp)
-# title(sub = "NOx")
-
 
 # Manual decomposition
 air.short %<>% mutate(year=year(air.short$Date)+yday(air.short$Date)/freq_daily)
 co_trend <- lm(air.short$CO~air.short$year)
 NOx_trend <- lm(air.short$NOx~air.short$year)
-# plot(co, main="CO trend per year")
-# abline(co_trend)
-# plot(NOx, main="NOx trend per year")
-# abline(NOx_trend)
 
 air_yr <- air.short %>%
   mutate(co_raw=replace_na(CO,0), NOx_raw=replace_na(NOx,0)) %>%
@@ -655,11 +643,6 @@ plot(NOx_yr, xlab='Year', ylab='Average NOx pollution')
 abline(NOx_yr_trend)
 title(main = "NOx development over the years and trend line")
 
-
-# plot(co_yr)
-# pacf(co_yr)
-# plot(tbats(co_yr))
-# title(sub = "CO ")
 tree_ts <-  ts(tree_ts_sum$sum_trees, start=min(tree_ts_sum$pflanzjahr), frequency=1)
 tb_tree_ts <- tbats(tree_ts)
 tb_co_ts <- tbats(co_yr)
@@ -670,44 +653,30 @@ title(main = "Residuals of CO")
 plot(residuals(tb_nox_ts))
 title(main = "Residuals of NOx")
 
-# adf.test(co_yr)
-
 # "Forecast"
 # plot(forecast(co_yr))
 ```
 The timeseries analysis of Carbon monoxide (co) and Nitrogen oxide (NOx) show that the they are closely correlated. It is further clear that they have both decreased drastically since the 1980 in Zürich. It is unlikely that the whole change can be attributed to the growing number of trees and green spaces in Zürich. It is more likely that a variety of factors including advancement in technologies and changes in laws and regulations contributed as well to the improvement in air quality.
 
-```{r correlation, echo=TRUE}
+```{r correlation, echo=TRUE, fig.show="hold", out.width="33%", fig.cap = "Fig. nnn: Correlation timeseries"}
 
 # Make the time series comparable
 temp_comp_random <- data.frame(Date=time(temp_comp$random), Random=temp_comp$random)
 co_comp_random <- data.frame(Date=time(co_comp$random), Random=co_comp$random)
 NOx_comp_random <- data.frame(Date=time(NOx_comp$random), Random=NOx_comp$random)
-#trees_comp_random <- data.frame(Date=time(trees_comp$random), Random=trees_comp$random)
-
 
 window <- list(start=1980,end=2021)
 
 temp_comp_random %<>% filter(Date>=window$start&Date<window$end)
 co_comp_random %<>% filter(Date>=window$start&Date<window$end)
 NOx_comp_random %<>% filter(Date>=window$start&Date<window$end)
-#trees_comp_random %<>% filter(Date>=window$start&Date<window$end)
 
 temp_comp_random_ts <- ts(temp_comp_random$Random, start=c(window$start,1), frequency=freq_daily)
 co_comp_random_ts <- ts(co_comp_random$Random, start=c(window$start,1), frequency=freq_daily)
 NOx_comp_random_ts <- ts(NOx_comp_random$Random, start=c(window$start,1), frequency=freq_daily)
-#trees_comp_random_ts <- ts(trees_comp_random$Random, start=c(window$start,1), frequency=freq_daily)
 
 
 # Cross correlation function
-# ccf(temp_comp_random_ts,co_comp_random_ts)
-
-# ccf(temp_comp_random_ts, co_comp_random_ts, 
-#     lag.max = 300,
-#     main = "Temp - CO Cross-Correlation Plot",
-#     ylab = "CCF", 
-#     na.action = na.pass)
-
 ccf(residuals(tb_tree_ts), residuals(tb_nox_ts), 
     lag.max = 300,
     main = "Trees - NOx Cross-Correlation Plot",
@@ -723,9 +692,7 @@ ccf(residuals(tb_tree_ts), residuals(tb_temp_ts),
 
 ```
 
-Now one can see the correlations between the sum of trees and air quality (CO and NOx) as well as the correlation between the sum of trees and temperature. The graphs shows no strong correlations, although a slightly significant correlation with a lag is visible for amount of trees on air quality. Meaning that after a some time a larger amount of trees could have an influence in reducing Carbon monoxide and Nitrogen oxide in the air. 
-
-
+Now one can see the correlations between the sum of trees and air quality (CO and NOx) as well as the correlation between the sum of trees and temperature. The graphs shows no strong correlations, although a slightly significant correlation with a lag is visible for amount of trees on air quality. Meaning that after a some time a larger amount of trees could have an influence in reducing Carbon monoxide and Nitrogen oxide in the air. To further analyse this more data from more measuring station over a number of years would be necessary. The timeseries analysis leads us to the conclusion that the impact of trees might be very localized and shows that nearly no correlation between trees and air quality or temperature is visible in the available data.
 
 
 ## Tableau Dashboards
@@ -960,10 +927,9 @@ write_csv(yearly_nox, 'year_nox_tableau.csv')
 
 
 
-
 ## Conclusions and findings
 
-Based on our data, there is no correlation between the number of trees planted in a given district in the city of Zurich and the temperature on a macro scale.
+Based on our data, there is no correlation between the number of trees planted in a given district in the city of Zurich and the temperature on a macro scale. The same is true for the timeseries analysis between number of trees and the air quality. It is likely that there are too many additional factors outside of the data that influence it. The data also shows that it is very probable that the effects of trees is very localized and that the do not have an impact if they are too far away from the measuring station. Thus we would recommend a very localized experiment that removes as many outside factors as possible.
 
 ## Outlook and next steps
 While we did manage to get some very insightful and interesting results, we did also come across some issues, mostly with the data availability and quality. It would be useful to collect more data from across the different districts in Zürich. It would also be helpful if that data would be completely available across a time-frame of at least 20 years. This would allow for creating a more complete picture and better comparisons among districts. Another possibility would be take a closer look at some of the outliers using Extreme Value Theory (EVT). A further approach would be to create a simulation. While this would obviously involve a lot more effort, it would allow to simulate potential scenarios and could thus help city planners and politicians to make more informed policy decisions.  
