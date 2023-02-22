@@ -706,8 +706,8 @@ Below you can find a screenshot of one of the visualizations in our dashboard. T
 ![Target Picture](../images/tableau_trees_total.png)  
 For the dashboard, some additional data wrangling was done. Furthermore the dataset had to be expanded and missing values needed to be added to create a smoother dashboard experience.
 
-```{r Tableau_data_wrangling, echo=False, fig.cap = "Fig. 1: Text"}
-###
+```{r Tableau_data_wrangling, echo=FALSE, fig.cap = "Fig. 1: Text"}
+
 library(tidyverse)      # select
 library(ggplot2)    # ggplot
 library(reshape2) 
@@ -779,7 +779,7 @@ tree_year_quartier_sum <- tree_year_quartier %>%
 
 year_list <- do.call(seq, as.list(range(c(1983, 2023))))
 
-tree_year_quartier$pflanzjahr
+#tree_year_quartier2 <- tree_year_quartier
 
 tree_year_quartier2 <- tree_year_quartier %>%
   ungroup(pflanzjahr) %>%
@@ -788,8 +788,8 @@ tree_year_quartier2 <- tree_year_quartier %>%
   rename(pflanzjahr = year_list) %>%
   full_join(tree_year_quartier, by = c('pflanzjahr', 'quartier')) %>%
   arrange(quartier, pflanzjahr) %>%
-  filter(pflanzjahr > 1982) %>%
-  mutate(tree_count = replace_na(tree_year_quartier2$tree_count, 0))
+  mutate(tree_count = replace_na(tree_count, 0)) %>%
+  filter(pflanzjahr > 1982)
 
 tree_year_quartier2$tree_sum <- 0
 
@@ -806,24 +806,6 @@ for (x in 2:length(tree_year_quartier2$quartier)) {
 write_csv(tree_year_quartier2, 'tree_year_quartier_for_tableau.csv')
 
 #-----------------AIR QUALITY----------------------------------
-
-air_co <- air %>%
-  dplyr::select(Datum, CO)
-
-plot(air_co)
-
-
-#summarise CO2 by year
-yearly_air <- air %>%
-  add_column(year = lubridate::year(air$Datum))
-
-yearly_aq <- yearly_air %>%
-  #dplyr::select(year, CO) %>%
-  group_by(year) %>%
-  summarise(mean_co = mean(CO, na.rm = T), mean_no2 = mean(NO2, na.rm = T), mean_no = mean(NO, na.rm = T), mean_nox = mean(NOx, na.rm = T), mean_so2 = mean(SO2, na.rm = T))
-
-
-
 
 
 merged_temp <- read_csv("/Users/fluethard/hslu/sustainability/git/sustainability/datasets/merged_temp.csv")
@@ -874,13 +856,7 @@ temp_by_station_2022 <- merged_temp %>%
 
 
   
-  
-  
-
-
-  # New station data from Salomon Idaweb
-  
-temp_affoltern <- read.csv('/Users/fluethard/hslu/sustainability/git/sustainability/datasets/temp_affoltern.csv', sep = ';', fill = T)
+# New station data from  Idaweb
   
 temp_fluntern <- read.csv('/Users/fluethard/hslu/sustainability/git/sustainability/datasets/temp_fluntern.csv', sep = ';')
 
