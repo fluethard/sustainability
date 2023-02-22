@@ -2,10 +2,8 @@ library(tidyverse)      # select
 library(ggplot2)    # ggplot
 library(reshape2) 
 
-air_co <- air %>%
-  dplyr::select(Datum, CO)
 
-plot(air_co)
+#-----------------TREES----------------------------------
 
 # trees by year
 tree_ts <- d.trees %>%
@@ -96,6 +94,13 @@ for (x in 2:length(tree_year_quartier2$quartier)) {
 }
 
 write_csv(tree_year_quartier2, 'tree_year_quartier_for_tableau.csv')
+
+#-----------------AIR QUALITY----------------------------------
+
+air_co <- air %>%
+  dplyr::select(Datum, CO)
+
+plot(air_co)
 
 
 #summarise CO2 by year

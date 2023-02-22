@@ -86,31 +86,6 @@ tree_year_quartier2 <- tree_year_quartier %>%
   filter(pflanzjahr > 1982) %>%
   mutate(tree_count = replace_na(tree_year_quartier2$tree_count, 0))
 
-tree_year_sum_testing <- tree_year_quartier2 %>%
-  group_by(quartier, pflanzjahr, tree_count) %>%
-  mutate(tree_count = replace_na(tree_year_quartier2$tree_count, 0)) %>%
-  mutate(cum_trees = cumsum(tree_count)) %>%
-  ungroup(quartier)
-
-tree_year_sum_testing <- tree_year_quartier2 %>%
-  mutate(tree_count = replace_na(tree_year_quartier2$tree_count, 0)) %>%
-  mutate(cum_trees = ave(tree_count, cumsum(tree_count)%/%41, FUN=cumsum))
-
-
-write_csv(tree_year_quartier2, 'tree_year_quartier_for_tableau.csv')
-
-testing <- tree_year_quartier %>%
-  ungroup(pflanzjahr) %>%
-  dplyr::select(quartier) %>%
-  expand(quartier, year_list)
-
-
-
-testing_validation <- testing %>%
-  group_by(quartier) %>%
-  summarise(year_count = n())
-
-
 tree_year_quartier2$tree_sum <- 0
 
 
@@ -123,6 +98,7 @@ for (x in 2:length(tree_year_quartier2$quartier)) {
   }
 }
 
+write_csv(tree_year_quartier2, 'tree_year_quartier_for_tableau.csv')
 
 
 

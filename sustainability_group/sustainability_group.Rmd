@@ -731,6 +731,8 @@ Now one can see the correlations between the sum of trees and air quality (CO an
 ## Tableau Dashboards
 
 To aid us in our geospatial analysis and to potentially communicate some of our findings to a broader public, we have created a Tableau dashboard. 
+The first visualization shows that
+
 Below you can find a screenshot of one of the visualizations in our dashboard. To explore the full interactive dashboard, please follow the following link.
 
 ![Target Picture](../images/tableau_trees_total.png)  
