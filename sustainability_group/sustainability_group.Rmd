@@ -755,12 +755,7 @@ tree_year_sum <- tree_year %>%
   mutate(cum_crown = cumsum(crown_sum))
 
 
-plot(tree_ts)
 
-# TO DO
-# Stitch Trees + Air + Temp
-# Lora Sensor Data
-# Tableau
 
 tree_year_sum %>%
   ggplot(mapping = aes(x = pflanzjahr, y = cum_crown)) + geom_line()
@@ -913,6 +908,6 @@ Based on our data, there is no correlation between the number of trees planted i
 ## Outlook and next steps
 While we did manage to get some very insightful and interesting results, we did also come across some issues, mostly with the data availability and quality. It would be useful to collect more data from across the different districts in Zürich. It would also be helpful if that data would be completely available across a time-frame of at least 20 years. This would allow for creating a more complete picture and better comparisons among districts. Another possibility would be take a closer look at some of the outliers using Extreme Value Theory (EVT). A further approach would be to create a simulation. While this would obviously involve a lot more effort, it would allow to simulate potential scenarios and could thus help city planners and politicians to make more informed policy decisions.  
 
-Further research questions could take a more micro-scope and evaluate the temperature on both a micro and macro scale. Especially interesting would be an evaluation to calculate or simulate the amount of vegetative cooling to reach a critical mass that makes the efforts observable on a macro level. In our opinion, it would be useful to not only include trees, as our 
+Further research questions could evaluate the temperature on both a micro and macro scale. Especially interesting would be an evaluation to calculate or simulate the amount of vegetative cooling to reach a critical mass that makes the efforts observable on a macro level.  In our opinion, it would be useful to not only include trees, as our research did, but also plants on facades and rooftops. Furthermore, the study should be controlled against the disappearance of undeveloped land in favour of urban spread.
 
 
