@@ -3,13 +3,13 @@ title: "sustainability_group3 - Trees"
 date: "2023-02-06"
 author: "Fabian Lüthard, Elisabeth Freimann, Simon Kohler"
 output:
-  pdf_document:
-    toc: yes
   html_document:
     df_print: paged
     toc: yes
     theme: united
     number_sections: yes
+  pdf_document:
+    toc: yes
   word_document:
     toc: yes
 ---
@@ -696,7 +696,7 @@ ccf(residuals(tb_tree_ts), residuals(tb_temp_ts),
 Now one can see the correlations between the sum of trees and air quality (CO and NOx) as well as the correlation between the sum of trees and temperature. The graphs shows no strong correlations, although a slightly significant correlation with a lag is visible for amount of trees on air quality. Meaning that after a some time a larger amount of trees could have an influence in reducing Carbon monoxide and Nitrogen oxide in the air. To further analyse this more data from more measuring station over a number of years would be necessary. The timeseries analysis leads us to the conclusion that the impact of trees might be very localized and shows that nearly no correlation between trees and air quality or temperature is visible in the available data.
 
 
-## Tableau Dashboards
+## Tableau Dashboard
 
 To aid us in our geospatial analysis and to potentially communicate some of our findings to a broader public, we have created a Tableau dashboard that acts as a prototype. Not all visualizations that we have explored made it into the prototype, and we only kept what might provided an added benefit to the rest of the analysis presented here. We have kept three panels in the dashboard (or rather Tableau "story").
 
@@ -757,12 +757,6 @@ tree_year <- d.trees %>%
 tree_year_sum <- tree_year %>%
   mutate(cum_trees = cumsum(tree_count)) %>%
   mutate(cum_crown = cumsum(crown_sum))
-
-
-
-
-tree_year_sum %>%
-  ggplot(mapping = aes(x = pflanzjahr, y = cum_crown)) + geom_line()
 
 
 tree_year_quartier <- d.trees %>%
