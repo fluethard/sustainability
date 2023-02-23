@@ -1,6 +1,6 @@
 ---
 title: "sustainability_group3 - Trees"
-date: "2023-02-06"
+date: "2023-02-24"
 author: "Fabian Lüthard, Elisabeth Freimann, Simon Kohler"
 output:
   html_document:
@@ -18,6 +18,8 @@ output:
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
+\
+
 # TREES  -  TREES  -  TREES
 
 ## Introduction
@@ -30,7 +32,7 @@ Our working hypothesis was that we can observe the cooling effects of trees on a
 While there are a number of potential factors on the local, regional, and even global scale that could have a significant influence on the local climate, this project focuses on local (i.e. on the city district level) data from the city of Zurich in regards to air quality, temperature information and the tree inventory. Further factors are described using sources, but are not included in the data analysis.
 To clarify our project goal and narrow it down we created the following drawing during an ideation session: 
 
-![Target Picture](../images/trees_vs_Pollution.png)  
+![Figure 1: Target Picture](../images/trees_vs_Pollution.png){width=50%}  
 
 The drawing depicts two potential futures for Zurich. One with more green spaces, and one with more urban wasteland. The idea of the project is to find out how much the trees and green spaces actually impact the city of Zurich in regards to temperature and air pollution, as measured on a district level using open data from general-purpose measurement stations (i.e. the data collection was in no way geared towards our analysis.) 
 
@@ -41,22 +43,22 @@ A factor that we did not control for, which could have large implications on the
 The temporal scope of our data is limited to the time span between 1983 and 2022.
 To visualize the scope of our project, we have created a systems view that can be seen below.
 
-![Systems View](../images/loopy.gif)
+![Figure 2: Systems View](../images/loopy.gif)
 
 ### Stakeholders
 To ensure we include all potential stakeholders in our project at the appropriate level we created the following stakeholder map: 
 
-![Stakeholders](../images/Stakeholders.png)
+![Figure 3: Stakeholders](../images/Stakeholders.png){width=50%}
+
 
 We sorted them into three possible categories: "direct", "indirect", "unintended". Our main target is to work together with Grün Stadt Zürich and convince politicians, the government, and urban planners on the benefits of a greener city. Indirectly involved would be municipal workers such as street sweepers, who have to deal with more leaves on the ground on the streets, and tree nurseries, which would be relied upon to provide the trees. The stakeholder map lists further stakeholders who need to be considered if the proposed changes would be implemented. It is also very possible and even likely that additional stakeholders will have to be considered during the project. 
 
 
 ## Big Picture: Embedding in the Sustainable Development Goals (SDG)
 The SDGs lay out the goals that the global community (United Nations General Assembly in 2015) has agreed on. In total there are 17 goals and they range from 1. "No poverty" to 17. "Partnerships for the goals" and include social, economic and environmental targets. For our research we have identified the relevant goals and put them into the three different categories: Risk, Opportunity and Intended. 
-![Sustainable Development Goals](../images/sdg.png)
+![Figure 4: Sustainable Development Goals](../images/sdg.png)
 As can be seen, the intended target for our research is to help achieve goal number 3, "Good health and well-being". This can be achieved if we can prove a correlation between the amount of trees in a district and an improvement in air quality, which could then lead to the increase of planting of new trees in Zurich as well as a reduction of concrete wastelands in favor of green spaces. This will result in more shade and less heat islands and will, among other things, improve the quality of life of all people reacting sensitively to high temperatures.
 There are a number of opportunities as well in regards to climate action, economic growth, and affordable and clean energy. There are only limited risks that this project has. However it is imaginable that the improvement in air quality in certain areas could lead to a increase in inequalities between more and less affluent communities, the former of which could afford to move to the greener areas. It is our conviction that it is important to always be responsible and think of possible negative externalities and unintended consequences while planning for new green zones and planting new trees.
-
 
 ## Data sources
 Our research is based on four publicly available data sets: Air quality information, two sets of temperature data, and a tree cadastre. The "Fluntern Reference Station" data set was only used for the analysis in Tableau. Following is a short overview of the different data sets:
@@ -103,7 +105,7 @@ library(ggplot2)
 library(gridExtra)
 library(grid)
 library(reshape2) 
-
+library(knitr)
 ```
 
 In this step we collected the three data sets and prepared them so that they were usable in our analysis. To achieve this, certain changes to the data were necessary to facilitate an informative analysis. 
@@ -232,7 +234,7 @@ To gain insights from the available information we have created a number of grap
 
 \
 
-```{r tree_pflanzjahr, echo=FALSE, fig.show="hold", out.width="33%", fig.cap = "Fig. nnn: Year of planting and crown diameter"}
+```{r tree_pflanzjahr, echo=FALSE, fig.show="hold", out.width="33%", fig.cap = "Fig. 5: Year of planting and crown diameter"}
 
 # # bar chart pflanzjahr alle
 # ggplot(d.trees, aes(x = pflanzjahr)) +
@@ -260,15 +262,16 @@ ggplot(d.trees, aes(x = kronendurchmesser)) +
 
 ```
 
-The two graphs in figure nnn on the left side show the number of trees planted per year as of 1950. The graph on the left side reflects our data on a yearly basis as we got it from our data set. From the data we gathered that a large number of trees were planted in five-year cycles in the nineties and earlier. To gain a more consistent view, we binned the trees into ten-year periods in the middle bar chart.
+The two graphs in figure 5 on the left side show the number of trees planted per year as of 1950. The graph on the left side reflects our data on a yearly basis as we got it from our data set. From the data we gathered that a large number of trees were planted in five-year cycles in the nineties and earlier. To gain a more consistent view, we binned the trees into ten-year periods in the middle bar chart.
 
 Planted trees include both additional trees and replacements. There have been a number of extraordinary environmental events in recent years, such as cyclone Lothar in December 1999 or the heavy snow fall in January 2021 and storm Bernd in July 2021 which damaged more than 2'000 trees on public ground in such a way that they had to be cut down. Replanting of those 2'000 trees will take time until the year 2025.
+Further information can be found in: 
 https://www.stadt-zuerich.ch/ted/de/index/departement/medien/medienmitteilungen/2021/oktober/211007a.html
 
 \
 
 ## Remark on trees on private property    
-\
+
 The City of Zurich is continuously planting trees on public ground as the awareness that trees are an effective measure to reduce heat in the city has become a common understanding. But if we broaden our view and also take private property into consideration, we get a different picture. 
 Half of the area of the tree crowns is on private ground and those are disappearing in such a pace that the overall population of trees is decreasing as well.   
 (https://www.tagesanzeiger.ch/die-stadt-will-ihre-krone-vergroessern-362720147046)
@@ -277,8 +280,6 @@ Half of the area of the tree crowns is on private ground and those are disappear
 
 
 ## Temperature trends
-
-\
 
 As a first exploratory data analysis for our temperature data we do not look into the development of temperature in general as we will have a detailed insight in the Analysis chapter, we rather look at the evolution of the maximum and minimum temperature over time.
 
@@ -297,7 +298,7 @@ meteo.temp <- meteo.extr %>%
    geom_smooth(se = FALSE, color = "blue", size=0.5)
 ```
 
-```{r temperature_trends, echo=FALSE, fig.show="hold", out.width="33%", fig.cap = "Fig. nnn: Temperature trends of maximum and minimum values"}
+```{r temperature_trends, echo=FALSE, fig.show="hold", out.width="33%", fig.cap = "Fig. 6: Temperature trends of maximum and minimum values"}
 
 # Stampfenbach max of mean of daily temperature with trendline
 meteo.sta <- meteo.extr %>%
@@ -337,17 +338,17 @@ ggplot(meteo.sta.max, aes(x = Jahr, y = Max)) +
 
 ```
 
-The temperatures we have in our data set are daily means. In the left graph in figure nnn we look at the text text
+The temperatures we have in our data set are daily means. In the left graph in figure 6 we look at the yearly maximum of daily means and in the middle graph we see the development of the yearly minimum if daily means. Both of them show a trend upwards, the maximum of the mean temperatures is nowadays about two degrees higher than it was in the year 1983. We observe a temperature rise for the minimum of the mean temperatures by about three degrees. We also have the measurements of the absolute maximum temperature per day which is depicted in the graph on the right hand side, where we look at the yearly maximum of all daily maximum. The trend is upwards as well, about two degrees within the analyzed time frame.
+For all these extreme temperatures we can observe the same pattern. 
 
-shows the yearly development of the max of the daily means .
-
-
+To get a more precise insight on temperature change per year, we look into the output of the simple linear model with time and temperature. The summaries below provide the figures. For the maximum of the daily mean, each year the temperature rises by 0.076 degrees. This results in about the two degrees mentioned above for the past 30 years. For the minimum of the daily mean, the temperature rises by 0.109 degrees per year. The temperature rise of the yearly maximum of the absolute daily temperature shows very similar increase as the yearly maximum of the mean (0.075 degrees).
 
 ```{r temperature_lm, echo=TRUE}
 summary(lm(meteo.sta$Max ~ meteo.sta$Jahr))$coefficients
 summary(lm(meteo.sta.min$Min ~ meteo.sta.min$Jahr))$coefficients
 summary(lm(meteo.sta.max$Max ~ meteo.sta.max$Jahr))$coefficients
 ```
+
 
 ```{r global_radiation, eval=FALSE, echo=FALSE}
 
@@ -373,7 +374,7 @@ summary(lm(meteo.sta.glo$Max ~ meteo.sta.glo$Jahr))
 
 ### Daily development of Carbon Monoxide and Nitrogen Oxides
 
-```{r plot_air, echo=FALSE, echo=FALSE, fig.show="hold", fig.height=3, out.width="90%", fig.align='center', fig.cap = "Fig. nnn: Daily CO and NOx"}
+```{r plot_air, echo=FALSE, echo=FALSE, fig.show="hold", fig.height=3, out.width="90%", fig.align='center', fig.cap = "Fig. 7: Daily CO and NOx"}
 
 #melt data frame into long format
 air.co.plot <- melt(air.co,  id.vars = "Date")
@@ -399,20 +400,14 @@ g2 <- ggplot(air.nox.plot, aes(Date, value), group = 5) +
 grid.arrange(g1, nullGrob(), g2, widths=c(0.45,0.1,0.45))
 ```
 
-A first visual inspection of carbon monoxide and nitrogen oxides as illustrated in figure nnn shows a reduction of both CO and NOx, from 1983 up to 2022. The trend line in red shows a significant improvement, especially in the Eighties and early Nineties. 
+A first visual inspection of carbon monoxide and nitrogen oxides as illustrated in figure 7 shows a reduction of both CO and NOx, from 1983 up to 2022. The trend line in red shows a significant improvement, especially in the Eighties and early Nineties. 
 It is unlikely that trees are the only factor influencing this improvement. Rather, other factors such as new laws and regulations are likely to have played a major role. In addition, in this time frame, cars were equipped with mandatory catalytic converters, which mainly reduce carbon monoxide, hydrocarbon and nitrogen oxides. 
 Searching the internet for explanations to which we could refer to did not lead to any results, as most time series only start as of 1990. 
-Additional potential influencing factors are mentioned in nnn.
+Additional potential influencing factors are mentioned in chapter 1.3.
 
-\
-\
---> hier die Referenz auf Loopy Kapitel
-\
-\
+The same data depicted as boxplots and summarized per year in figure 8 confirms the improvement of air quality as well as the trend and the maximum values.
 
-The same data depicted as boxplots and summarized per year confirms the improvement of air quaility as well as the trend and the maximum values.
-
-```{r air.boxplots, echo=FALSE, fig.show="hold", out.width="45%", fig.align='center', fig.cap = "Fig. nnn: CO and NOx per year"}
+```{r air.boxplots, echo=FALSE, fig.show="hold", out.width="45%", fig.align='center', fig.cap = "Fig. 8: CO and NOx per year"}
 
 # Boxplots for CO all over Zürich
 boxplot(Wert ~ Jahr, data = air, subset = Parameter %in% names(table("CO")),
@@ -499,11 +494,11 @@ plot(subset(air.means, Parameter == "SO2",
 
 \  
 
-### Difference of nitrogen oxides per measuring station
+### Difference of Nitrogen Oxides per measuring station
 
 \
 
-```{r air.boxplots.station, echo=FALSE, fig.show="hold", out.width="33%", fig.align='center', fig.cap = "Fig. nnn: Nitrogen oxides per monitoring station"}
+```{r air.boxplots.station, echo=FALSE, fig.show="hold", out.width="33%", fig.align='center', fig.cap = "Fig. 9: Nitrogen oxides per monitoring station"}
 
 # Boxplots for NOx per monitoring station
 #air.he <- air %>% filter(Standort == "Zch_Heubeeribüel")
@@ -525,14 +520,13 @@ boxplot(Wert ~ Jahr, data = air.ro, subset = Parameter %in% names(table("NOx")),
         xlab = "Year", ylab = "ppb")
 ```
 
-Nitrogen oxides have been registered at three different measuring stations. The values differ as the measuring stations have different settings, for example  main traffic axis, 6 m distance to the street (Rosengartenstrasse) or moderately frequented road in residential area, 3 m distance to the street (Schimmelstrasse).
+Nitrogen oxides have been registered at three different measuring stations (figure 9). The values differ as the measuring stations have different settings, for example  main traffic axis, 6 m distance to the street (Rosengartenstrasse) or moderately frequented road in residential area, 3 m distance to the street (Schimmelstrasse).
 
 Further details on measuring stations:  
 Stampfenbachstrasse: https://zueriluft.ch/airmo/frontend/station.php?ID=8  
 Schimmelstrasse: https://zueriluft.ch/airmo/frontend/station.php?ID=6  
 Rosengartenstrasse: https://zueriluft.ch/airmo/frontend/station.php?ID=11  
 
-\
 
 The analysis done in the following chapters is based on the measurements at Stampfenbachstrasse as this data goes back as far as 1983.
 
@@ -540,12 +534,12 @@ The analysis done in the following chapters is based on the measurements at Stam
 
 
 
-## Analysis
+# Analysis
 Having gained an overview of the data, we would now like to analyse the data in more detail using a few different methodologies.
 
-### Time series analysis
+## Time series analysis
 In this section we are trying to see if there is a correlation over time between the amount of trees and the air quality or temperature. For this we use time series analysis, meaning we need to convert our data into time series objects. After transforming them we can then look at the decomposition of the objects. Thus we are able to see trends, seasonality, and residuals. However the seasonality is only visible for air pollution and temperature, as the tree information is only available on a yearly basis. 
-```{r time_meteo, echo=TRUE, fig.show="hold", out.width="33%", fig.cap = "Fig. nnn: Temperature timeseries"}
+```{r time_meteo, echo=TRUE, fig.show="hold", out.width="33%", fig.cap = "Fig. 10: Temperature timeseries"}
 
 meteo %<>% complete(Date=seq.Date(min(Date), max(Date), by='day'))
 
@@ -585,12 +579,13 @@ temp_d2 <- diff(temp, differences = 1)
 ## difference the differenced CO2 data
 temp_d2d12 <- diff(temp_d2, lag = 12)
 ## plot the newly differenced data
-plot(temp_d2d12, ylab = "Temperature without trend and seasonality")
+plot(temp_d2d12, main = "Temperature without trend and seasonality")
 
 ```
 Generally, we can see that the temperature is slightly rising over time. There is a slight upwards trend noticeable and it is also important to remember how dangerous a temperature increase of just one percent can be for the biodiversity. 
+\
 
-```{r time_air, echo=TRUE,fig.show="hold", out.width="50%", fig.cap = "Fig. nnn: Air Quality timeseries"}
+```{r time_air, echo=TRUE,fig.show="hold", out.width="50%", fig.cap = "Fig. 11: Air Quality timeseries"}
 
 air.short %<>% complete(Date=seq.Date(min(Date), max(Date), by='day'))
 
@@ -654,8 +649,9 @@ title(main = "Residuals of NOx")
 # plot(forecast(co_yr))
 ```
 The time series analysis of carbon monoxide (CO) and nitrogen oxide (NOx) show that the they are closely correlated. It is further clear that they have both decreased drastically since the 1980s in Zurich. It is unlikely that the whole change can be attributed to the growing number of trees and green spaces in Zurich. It is more likely that a variety of factors, including advancement in technologies and changes in laws and regulations, contributed more to the improvement in air quality.
+\
 
-```{r correlation, echo=TRUE, fig.show="hold", out.width="33%", fig.cap = "Fig. nnn: Correlation timeseries"}
+```{r correlation, echo=TRUE, fig.show="hold", out.width="33%", fig.cap = "Fig. 12: Correlation timeseries"}
 
 # Make the time series comparable
 temp_comp_random <- data.frame(Date=time(temp_comp$random), Random=temp_comp$random)
@@ -691,8 +687,11 @@ ccf(residuals(tb_tree_ts), residuals(tb_temp_ts),
 
 Now one can see the correlation between the sum of trees and air quality (CO and NOx) as well as the correlation between the sum of trees and temperature. The graphs shows no strong correlations, although a slightly significant correlation with a lag is visible for amount of trees on air quality. Meaning that after some time a larger amount of trees could have an influence in reducing carbon monoxide and nitrogen oxide in the air. To further analyse this, more data from more measuring stations over a greater number of years would be necessary. The time series analysis leads us to the conclusion that the impact of trees might be very localized and shows that nearly no correlation between trees and air quality or temperature is visible in the available data.
 
+\
 
-## Tableau Dashboard
+# Tableau Dashboard
+
+\
 
 To aid us in our geospatial analysis and to potentially communicate some of our findings to a broader public, we have created a Tableau dashboard that acts as a prototype. Not all visualizations that we have explored made it into the prototype, and we only kept what might provide an added benefit to the rest of the analysis presented here. We have kept three panels in the dashboard (or rather Tableau "story").
 
@@ -702,7 +701,7 @@ In the third visualization, we included our secondary topic of interest, which i
 
 Below you can find a screenshot of one of the visualizations in our dashboard. To explore the full interactive dashboard, please follow the following link: https://public.tableau.com/views/TreesTreesTrees/Story1 .
 
-![Tableau screenshot](../images/tableau_trees_total.png)  
+![Figure 13: Tableau screenshot](../images/tableau_trees_total.png)  
 
 For the dashboard, some additional data wrangling was done. Furthermore the data set had to be expanded and missing values needed to be added to create a smoother dashboard experience.
 
@@ -892,9 +891,9 @@ write_csv(yearly_nox, 'year_nox_tableau.csv')
 
 ```
 
+\
 
-
-## Conclusions and findings
+# Conclusions and findings
 
 Based on our data, there is no correlation between the number of trees planted in a given district in the city of Zurich and the temperature on a macro scale. The same is true for the time series analysis between number of trees and the air quality. It is likely that there are too many additional factors outside of our available data that influence it. The data also shows that it is very probable that the cooling effect of trees is very local and that no measurable impact can be detected if they are too far away from the measuring station.
 While we did not find any correlation for our primary research question, our analysis nonetheless yielded some interesting insights. 
@@ -902,7 +901,10 @@ Firstly, the main insight is that the warming of the city, as measured with our 
 Secondly, we saw that the city of Zurich started with some more consistent tree planting across all districts in the early 2000's, whereas before, individual districts were targeted more specifically. 
 Thirdly, to end on a positive note, there has been a clear improvement in various air quality indicators, especially NO. However, even if there is a slight correlation with the increase of planted trees, this correlation would have to be treated as spurious, as factors such as the introduction of the catalytic converter or other regulatory measures are more than likely to have had much a larger impact in this area.
 
-## Outlook and further research
+\
+
+# Outlook and further research
+
 While we did manage to get some very insightful and interesting results, we did also come across some issues, mostly with the data availability and quality. It would be useful to collect more data from the different districts in Zürich. It would also be helpful if that data would be completely available across a time-frame of at least 20 years. This would allow for creating a more complete picture and better comparisons among districts. Another possibility would be take a closer look at some of the outliers using Extreme Value Theory (EVT). A further approach would be to create a simulation. While this would obviously involve a lot more effort, it would allow to simulate potential scenarios and could thus help city planners and politicians make more informed policy decisions.  
 Additionally, further research questions could evaluate the temperature on both a micro and macro scale. Especially interesting would be an evaluation to calculate or simulate the amount of trees that would need to be planted to reach a tipping point that makes the efforts observable on a macro level.  In our opinion, it would be useful to not only include trees, as our research did, but also plants on facades and rooftops. Furthermore, the study should be controlled against the disappearance of undeveloped land in favour of urban spread.
 
