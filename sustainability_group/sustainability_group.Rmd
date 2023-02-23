@@ -228,6 +228,146 @@ To gain insights from the available information we have created a number of grap
 
 \
 
+## Trees in Zürich and their development over the years
+
+\
+
+```{r tree_pflanzjahr, echo=FALSE, fig.show="hold", out.width="33%", fig.cap = "Fig. nnn: Year of planting and crown diameter"}
+
+# # bar chart pflanzjahr alle
+# ggplot(d.trees, aes(x = pflanzjahr)) +
+#   geom_bar() +
+#   labs(title="Trees per year planted", 
+#       x = "Year of planting", y = "Number of trees")
+
+# bar chart nur neuere pflanzjahre
+ggplot(d.trees[d.trees$pflanzjahr > 1949, ], aes(x = pflanzjahr)) +
+  geom_bar() +
+  labs(title="Trees planted as of 1950", 
+       x = "Year of planting", y = "Number of trees")
+
+ggplot(subset(d.trees, pflanzjahr > 1949 & pflanzjahr < 2021), 
+       aes(x = pflanzjahr)) +
+  geom_histogram(binwidth = 10) +
+  labs(title="Sum of trees (10 years) planted as of 1950", 
+       x = "Year of planting", y = "Number of trees")
+
+# bar chart kronendurchmesser
+ggplot(d.trees, aes(x = kronendurchmesser)) +
+  geom_bar() +
+  labs(title="Number of trees per crown diameter", 
+       x = "Crown diameter [m]", y = "Number of trees")
+
+```
+
+The two graphs in figure nnn on the left side show the numbers of trees planted per year as of 1950. The graph on the left side reflects our data on a yearly basis as we get it from our data set. As in earlier years the number of plantings were mainly summarized every five years, the middle bar chart shows a more consistent view by grouping 10 years into one bar.
+
+Planted trees include both, additional trees and replacements. There were a number of extraordinary environmental influences in recent years, such as cyclone Lothar in December 1999, 
+or the heavy snow fall in January 2021 and storm Bernd in July 2021 which damaged more than 2'000 trees on public ground in such a way that they had to be cut down. Replanting of those 2'000 trees will take time until the year 2025.
+https://www.stadt-zuerich.ch/ted/de/index/departement/medien/medienmitteilungen/2021/oktober/211007a.html
+
+\
+
+## Remark on trees on private property    
+\
+The City of Zurich is continuously planting trees on public ground as the awareness that trees are an effective measure to reduce heat in the city has become a common understanding. But if we broaden our view and take also the private ground into consideration, we get a different picture. 
+Half of the area of the tree crowns is on private ground and those are disappearing in such a pace, that the overall population of trees is decreasing as well.   
+(https://www.tagesanzeiger.ch/die-stadt-will-ihre-krone-vergroessern-362720147046)
+
+\
+
+
+## Temperature trends
+
+\
+
+As a first exploratory data analysis we do not look into the development of temperature in general as we will have a detailed insight in the Analysis chapter, we rather look at the evolvement of the maximum and minimum temperature over time.
+
+```{r temperature_trends_0, eval = FALSE, echo=FALSE, fig.show="hold", out.width="33%", fig.cap = "Fig. nnn: Temperature trends of maximum and minimum values"}
+
+# Temperaturentwicklung
+meteo.temp <- meteo.extr %>%
+  filter(Standort == "Zch_Stampfenbachstrasse") %>%
+  filter(Parameter == "T") %>%
+  select(Date, Wert) %>%
+  mutate(Date = as.Date(Date, format = "%Y-%m-%d"))
+
+ ggplot(data=subset(meteo.temp, !is.na(Wert)), aes(x = Date, y = Wert)) +
+   geom_line() +
+   ggtitle("Temperature at Stampfenbachstrasse") +
+   geom_smooth(se = FALSE, color = "blue", size=0.5)
+```
+
+```{r temperature_trends, echo=FALSE, fig.show="hold", out.width="33%", fig.cap = "Fig. nnn: Temperature trends of maximum and minimum values"}
+
+# Stampfenbach max of mean of daily temperature with trendline
+meteo.sta <- meteo.extr %>%
+  filter(Standort == "Zch_Stampfenbachstrasse") %>%
+  filter(Parameter == "T") %>%
+  group_by(Jahr, Parameter) %>%
+  summarize(Max = max(Wert, na.rm = TRUE), .groups = "drop")
+
+ggplot(meteo.sta, aes(x = Jahr, y = Max)) +
+  geom_line() +
+  ggtitle("Maximum of mean temperature at Stampfenbachstrasse") +
+  geom_smooth(method = "lm", se = FALSE)
+
+# Stampfenbach min of mean of daily temperature with trendline
+meteo.sta.min <- meteo.extr %>%
+  filter(Standort == "Zch_Stampfenbachstrasse") %>%
+  filter(Parameter == "T") %>%
+  group_by(Jahr, Parameter) %>%
+  summarize(Min = min(Wert, na.rm = TRUE), .groups = "drop")
+
+ggplot(meteo.sta.min, aes(x = Jahr, y = Min)) +
+  geom_line() +
+  ggtitle("Minimum of mean temperature at Stampfenbachstrasse") +
+  geom_smooth(method = "lm", se = FALSE)
+
+# Stampfenbach max of max temperature with trendline
+meteo.sta.max <- meteo.extr %>%
+  filter(Standort == "Zch_Stampfenbachstrasse") %>%
+  filter(Parameter == "T_max_h1") %>%
+  group_by(Jahr, Parameter) %>%
+  summarize(Max = max(Wert, na.rm = TRUE), .groups = "drop")
+
+ggplot(meteo.sta.max, aes(x = Jahr, y = Max)) +
+  geom_line() +
+  ggtitle("Maximum daily temperature at Stampfenbachstrasse") +
+  geom_smooth(method = "lm", se = FALSE)
+
+```
+
+The temperatures we have in our data set are daily means. In the left graph in figure nnn we look at the text text
+
+shows the yearly development of the max of the daily means .
+
+
+
+```{r temperature_lm, echo=TRUE}
+summary(lm(meteo.sta$Max ~ meteo.sta$Jahr))$coefficients
+summary(lm(meteo.sta.min$Min ~ meteo.sta.min$Jahr))$coefficients
+summary(lm(meteo.sta.max$Max ~ meteo.sta.max$Jahr))$coefficients
+```
+
+```{r global_radiation, eval=FALSE, echo=FALSE}
+
+# Stampfenbach mean of Globalstrahlung with trendline
+meteo.sta.glo <- meteo.extr %>%
+filter(Standort == "Zch_Stampfenbachstrasse") %>%
+  filter(Parameter == "StrGlo") %>%
+  group_by(Jahr, Parameter) %>%
+  summarize(Max = max(Wert, na.rm = TRUE), .groups = "drop")
+
+ggplot(meteo.sta.glo, aes(x = Jahr, y = Max)) +
+  geom_line() +
+  ggtitle("Development of mean of global radiation at Stampfenbachstrasse") +
+  geom_smooth(method = "lm", se = FALSE)
+summary(lm(meteo.sta.glo$Max ~ meteo.sta.glo$Jahr))
+```
+
+\
+
 ## Air quality in Zürich and its development over the years
 
 \
@@ -398,146 +538,6 @@ Rosengartenstrasse: https://zueriluft.ch/airmo/frontend/station.php?ID=11
 The analysis done in the following chapters is based on the measurements at Stampfenbachstrasse as this data is going back to 1983.
 
 \
-
-## Temperature trends
-
-\
-
-As a first exploratory data analysis we do not look into the development of temperature in general as we will have a detailed insight in the Analysis chapter, we rather look at the evolvement of the maximum and minimum temperature over time.
-
-```{r temperature_trends_0, eval = FALSE, echo=FALSE, fig.show="hold", out.width="33%", fig.cap = "Fig. nnn: Temperature trends of maximum and minimum values"}
-
-# Temperaturentwicklung
-meteo.temp <- meteo.extr %>%
-  filter(Standort == "Zch_Stampfenbachstrasse") %>%
-  filter(Parameter == "T") %>%
-  select(Date, Wert) %>%
-  mutate(Date = as.Date(Date, format = "%Y-%m-%d"))
-
- ggplot(data=subset(meteo.temp, !is.na(Wert)), aes(x = Date, y = Wert)) +
-   geom_line() +
-   ggtitle("Temperature at Stampfenbachstrasse") +
-   geom_smooth(se = FALSE, color = "blue", size=0.5)
-```
-
-```{r temperature_trends, echo=FALSE, fig.show="hold", out.width="33%", fig.cap = "Fig. nnn: Temperature trends of maximum and minimum values"}
-
-# Stampfenbach max of mean of daily temperature with trendline
-meteo.sta <- meteo.extr %>%
-  filter(Standort == "Zch_Stampfenbachstrasse") %>%
-  filter(Parameter == "T") %>%
-  group_by(Jahr, Parameter) %>%
-  summarize(Max = max(Wert, na.rm = TRUE), .groups = "drop")
-
-ggplot(meteo.sta, aes(x = Jahr, y = Max)) +
-  geom_line() +
-  ggtitle("Maximum of mean temperature at Stampfenbachstrasse") +
-  geom_smooth(method = "lm", se = FALSE)
-
-# Stampfenbach min of mean of daily temperature with trendline
-meteo.sta.min <- meteo.extr %>%
-  filter(Standort == "Zch_Stampfenbachstrasse") %>%
-  filter(Parameter == "T") %>%
-  group_by(Jahr, Parameter) %>%
-  summarize(Min = min(Wert, na.rm = TRUE), .groups = "drop")
-
-ggplot(meteo.sta.min, aes(x = Jahr, y = Min)) +
-  geom_line() +
-  ggtitle("Minimum of mean temperature at Stampfenbachstrasse") +
-  geom_smooth(method = "lm", se = FALSE)
-
-# Stampfenbach max of max temperature with trendline
-meteo.sta.max <- meteo.extr %>%
-  filter(Standort == "Zch_Stampfenbachstrasse") %>%
-  filter(Parameter == "T_max_h1") %>%
-  group_by(Jahr, Parameter) %>%
-  summarize(Max = max(Wert, na.rm = TRUE), .groups = "drop")
-
-ggplot(meteo.sta.max, aes(x = Jahr, y = Max)) +
-  geom_line() +
-  ggtitle("Maximum daily temperature at Stampfenbachstrasse") +
-  geom_smooth(method = "lm", se = FALSE)
-
-```
-
-The temperatures we have in our data set are daily means. In the left graph in figure nnn we look at the text text
-
-shows the yearly development of the max of the daily means .
-
-
-
-```{r temperature_lm, echo=TRUE}
-summary(lm(meteo.sta$Max ~ meteo.sta$Jahr))$coefficients
-summary(lm(meteo.sta.min$Min ~ meteo.sta.min$Jahr))$coefficients
-summary(lm(meteo.sta.max$Max ~ meteo.sta.max$Jahr))$coefficients
-```
-
-```{r global_radiation, eval=FALSE, echo=FALSE}
-
-# Stampfenbach mean of Globalstrahlung with trendline
-meteo.sta.glo <- meteo.extr %>%
-filter(Standort == "Zch_Stampfenbachstrasse") %>%
-  filter(Parameter == "StrGlo") %>%
-  group_by(Jahr, Parameter) %>%
-  summarize(Max = max(Wert, na.rm = TRUE), .groups = "drop")
-
-ggplot(meteo.sta.glo, aes(x = Jahr, y = Max)) +
-  geom_line() +
-  ggtitle("Development of mean of global radiation at Stampfenbachstrasse") +
-  geom_smooth(method = "lm", se = FALSE)
-summary(lm(meteo.sta.glo$Max ~ meteo.sta.glo$Jahr))
-```
-
-\
-
-## Trees in Zürich and their development over the years
-
-\
-
-```{r tree_pflanzjahr, echo=FALSE, fig.show="hold", out.width="33%", fig.cap = "Fig. nnn: Year of planting and crown diameter"}
-
-# # bar chart pflanzjahr alle
-# ggplot(d.trees, aes(x = pflanzjahr)) +
-#   geom_bar() +
-#   labs(title="Trees per year planted", 
-#       x = "Year of planting", y = "Number of trees")
-
-# bar chart nur neuere pflanzjahre
-ggplot(d.trees[d.trees$pflanzjahr > 1949, ], aes(x = pflanzjahr)) +
-  geom_bar() +
-  labs(title="Trees planted as of 1950", 
-       x = "Year of planting", y = "Number of trees")
-
-ggplot(subset(d.trees, pflanzjahr > 1949 & pflanzjahr < 2021), 
-       aes(x = pflanzjahr)) +
-  geom_histogram(binwidth = 10) +
-  labs(title="Sum of trees (10 years) planted as of 1950", 
-       x = "Year of planting", y = "Number of trees")
-
-# bar chart kronendurchmesser
-ggplot(d.trees, aes(x = kronendurchmesser)) +
-  geom_bar() +
-  labs(title="Number of trees per crown diameter", 
-       x = "Crown diameter [m]", y = "Number of trees")
-
-```
-
-The two graphs in figure nnn on the left side show the numbers of trees planted per year as of 1950. The graph on the left side reflects our data on a yearly basis as we get it from our data set. As in earlier years the number of plantings were mainly summarized every five years, the middle bar chart shows a more consistent view by grouping 10 years into one bar.
-
-Planted trees include both, additional trees and replacements. There were a number of extraordinary environmental influences in recent years, such as cyclone Lothar in December 1999, 
-or the heavy snow fall in January 2021 and storm Bernd in July 2021 which damaged more than 2'000 trees on public ground in such a way that they had to be cut down. Replanting of those 2'000 trees will take time until the year 2025.
-https://www.stadt-zuerich.ch/ted/de/index/departement/medien/medienmitteilungen/2021/oktober/211007a.html
-
-\
-
-## Remark on trees on private property    
-\
-The City of Zurich is continuously planting trees on public ground as the awareness that trees are an effective measure to reduce heat in the city has become a common understanding. But if we broaden our view and take also the private ground into consideration, we get a different picture. 
-Half of the area of the tree crowns is on private ground and those are disappearing in such a pace, that the overall population of trees is decreasing as well.   
-(https://www.tagesanzeiger.ch/die-stadt-will-ihre-krone-vergroessern-362720147046)
-
-\
-
 
 
 
