@@ -48,18 +48,18 @@ To ensure we include all potential stakeholders in our project at the appropriat
 
 ![Stakeholders](../images/Stakeholders.png)
 
-We sorted them into three possible categories: "direct", "indirect", "unintended". Our main target is to work together with Grüne Stadt Zürich and convince the politicians, the government and urban planners on the benefits of a greener city. Indirectly involved would be street sweepers, who have to deal with more leafs etc on the streets, and tree farms, who would be relied upon to provide the trees. The stakeholder map lists further stakeholders who need to be considered if the proposed changes would be implemented. It is also very possible and even likely that additional stakeholders will have to be considered during the project. 
+We sorted them into three possible categories: "direct", "indirect", "unintended". Our main target is to work together with Grün Stadt Zürich and convince politicians, the government, and urban planners on the benefits of a greener city. Indirectly involved would be municipal workers such as street sweepers, who have to deal with more leaves on the ground on the streets, and tree nurseries, which would be relied upon to provide the trees. The stakeholder map lists further stakeholders who need to be considered if the proposed changes would be implemented. It is also very possible and even likely that additional stakeholders will have to be considered during the project. 
 
 
 ## Big Picture: Embedding in the Sustainable Development Goals (SDG)
-The SDGs lay out the goals that the global community (United Nations General Assembly in 2015) has agreed on. In total there are 17 goals and they range from 1. "No poverty" to 17. "Partnerships for the goals" and include social, economic and environmental targets. For the research we have identified the relevant goals and put them into the three different categories: Risk, Opportunity and Intended. 
+The SDGs lay out the goals that the global community (United Nations General Assembly in 2015) has agreed on. In total there are 17 goals and they range from 1. "No poverty" to 17. "Partnerships for the goals" and include social, economic and environmental targets. For our research we have identified the relevant goals and put them into the three different categories: Risk, Opportunity and Intended. 
 ![Sustainable Development Goals](../images/sdg.png)
-As can be seen, the intended target for our research is to help achieve the goal number 3. "Good health and well-being". This can be achieved if we can prove a correlation between the amount of trees in a region and an improvement in air quality, which could then lead to increase of planting of new trees in Zürich as well as a reduction of concrete wastelands in favor of green spaces. This will result in more shade and less heat islands and will among others improve life quality of all people reacting sensitively to high temperatures.
-There are a number opportunities as well in regards to climate action, economic growth and affordable and clean energy. There are only limited risks that this project has. However it is imaginable that the improvement in air quality in certain areas could lead to a increase in inequalities between the rich and poor as rich people can afford to move to the green areas. It is also important to always be responsible and think of possible unintended consequences while planning for new green zones and planting new trees.
+As can be seen, the intended target for our research is to help achieve goal number 3, "Good health and well-being". This can be achieved if we can prove a correlation between the amount of trees in a district and an improvement in air quality, which could then lead to the increase of planting of new trees in Zurich as well as a reduction of concrete wastelands in favor of green spaces. This will result in more shade and less heat islands and will, among other things, improve the quality of life of all people reacting sensitively to high temperatures.
+There are a number of opportunities as well in regards to climate action, economic growth, and affordable and clean energy. There are only limited risks that this project has. However it is imaginable that the improvement in air quality in certain areas could lead to a increase in inequalities between more and less affluent communities, the former of which could afford to move to the greener areas. It is our conviction that it is important to always be responsible and think of possible negative externalities and unintended consequences while planning for new green zones and planting new trees.
 
 
 ## Data sources
-For the research there are three different data sets needed: Air quality information, temperature data, and a tree cadastre. All of these three data sets are publicly available. Following is a quick overview over the different data sets:
+Our research is based on four publicly available data sets: Air quality information, two sets of temperature data, and a tree cadastre. The "Fluntern Reference Station" data set was only used for the analysis in Tableau. Following is a short overview of the different data sets:
 
 ### Air quality
 Format: csv  
@@ -79,7 +79,7 @@ Number of rows: 15'706
 Number of variables: 20 (most important: date, temperature, location)   
 Source: https://gate.meteoswiss.ch/idaweb
 
-### Tree Cadastre
+### Tree cadastre
 Format: csv  
 Number of rows: 36'239  
 Number of variables: 17 (most important: year of  planting, diameter of crown, 
@@ -106,9 +106,9 @@ library(reshape2)
 
 ```
 
-In this step we collected the three data sets and prepared them so that they are for use in the analysis. To achieve this, certain changes to the data were necessary to facilitate an informative analysis. 
+In this step we collected the three data sets and prepared them so that they were usable in our analysis. To achieve this, certain changes to the data were necessary to facilitate an informative analysis. 
 
-First we loaded the tree cadastre data and wrangled the data to get additional information such as the amount of trees per year and the number of trees by district.
+First we loaded the tree cadastre data and wrangled the data to get additional information, such as the amount of trees per year and the number of trees by district.
 ```{r trees, echo=TRUE}
 d.trees <- read.csv('../datasets/gsz.baumkataster_baumstandorte.csv', encoding = "UTF-8")
 names(d.trees)[1] <- "objid" 
@@ -155,7 +155,7 @@ tree_year_sum <- tree_year %>%
 
 ```
 
-Next we load all the temperature information from the meteo data set. While this data set includes other information such as rain duration we will only use the temperature, as it seems unlikely that the amount of trees significantly impact the rain fall in an area. 
+Next, we loaded all the temperature information from the meteo data set. While this data set includes other information such as rain duration we we only use the temperature, as it seems unlikely that the amount of trees significantly impact the rainfall in an area. 
 
 ```{r temp, echo=TRUE}
 filenames.meteo <- list.files(path = "../datasets/meteo/", pattern = "*.csv", full.names = TRUE)
@@ -183,7 +183,7 @@ meteo$Date <- ymd(meteo$Date)
 head(meteo)
 ```
 
-Lastly the air quality data is loaded. While there are multiple location where air quality was measured not every station measures each variable. They also were not all put into operation at the same time. 
+Lastly the air quality data was loaded. While there are multiple locations where air quality was measured, not every station measures each variable. The stations also were not all put into operation at the same time. 
 
 ```{r air, echo=TRUE}
 
@@ -220,7 +220,7 @@ air.NOx <- air.short[keep]
 
 \
 
-# Insights into our datasets
+# Data insights
 
 \
 
