@@ -21,14 +21,14 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 # TREES  -  TREES  -  TREES
 
 ## Introduction
-Vegetative cooling, or using plants to shield urban environments from the sun’s radiation, has been somewhat of a hot topic in recent years. There has been plenty of research done in the field of vegetative cooling for cities, such as, e.g. a 2021 Europe-wide study by Schwaab et al. (https://www.nature.com/articles/s41467-021-26768-w), or a simulation done on potential cooling effects of trees on Zurich’s Münsterhof by Kubilay et al. (https://www.mdpi.com/2073-4433/11/12/1313 ). Both of these studies find that urban trees do have at least a local cooling effect, not only due to the shade that the trees provide, but also due to other factors such as different evaporation or cool air flow as compared to asphalt or concrete surfaces.
-While there has been ample more research on the hyper-local effect to reduce or even eliminate heat islands, our research focuses on the question of whether or not we can identify the effect of the efforts of urban vegetative cooling in the city of Zurich on a larger scale. Furthermore, we investigate if there is any correlation with different factors in regards to air quality.
+Vegetative cooling, or using plants to shield urban environments from the sun’s radiation, has been somewhat of a hot topic in recent years. There has been plenty of research done in the field of vegetative cooling for cities, such as, e.g. a 2021 Europe-wide study by Schwaab et al. (https://www.nature.com/articles/s41467-021-26768-w), or a simulation done on potential cooling effects of trees on Zurich’s Münsterhof by Kubilay et al. (https://www.mdpi.com/2073-4433/11/12/1313 ). Both of these studies find that urban trees do have at least a local cooling effect, not only due to the shade that the trees provide, but also due to other factors such as different evaporation or cool air flows as compared to asphalt or concrete surfaces.
+While there has been ample more research on the local effect to reduce or even eliminate heat islands, our research focuses on the question of whether or not we can identify the effect of the efforts of urban vegetative cooling in the city of Zurich on a larger scale. Furthermore, we investigate if there is any correlation with different factors in regards to air quality.
 
 
 ## Goal of the project
-We would like to prove that the planting of trees and the development of green spaces in an urban environment have positive correlations with the development of air quality indicators and a negative impact on temperatures in the city of Zurich. This project will try to pinpoint the effect trees have on these indicators. The results will be presented in a way to inform politicians, urban developers as well as the public about the impact that a more green city could have on our everyday lives. 
-While there are a number of potential factors, both local and national/global, can have a significant impact on the climate and for this research we are choosing to focus on data from Zürich in regards to air quality, temperature information and the tree inventory. Further factors are described using sources, but are not included in the data analysis.
-To clarify our project goal and narrow it down we drew the following picture: 
+Our working hypothesis was that we can observe the cooling effects of trees on a more than hyper-local scale and that the planting of trees and the development of green spaces in an urban environment have positive correlations with the development of air quality indicators. This project tried to pinpoint the effect trees have on these indicators. The target of the presentation of results is to inform politicians, urban developers, and the public about the impact that a greener city could have on our everyday lives. 
+While there are a number of potential factors on the local, regional, and even global scale that could have a significant influence on the local climate, this project focuses on local (i.e. on the city district level) data from the city of Zurich in regards to air quality, temperature information and the tree inventory. Further factors are described using sources, but are not included in the data analysis.
+To clarify our project goal and narrow it down we created the following drawing during an ideation session: 
 
 ![Target Picture](../images/trees_vs_Pollution.png)  
 
@@ -701,7 +701,7 @@ The first visualization shows the cumulative development of new trees planted by
 For the second visualization, we only kept the districts where we also had temperature measurement stations. In addition to the number of trees planted (shaded in green), we constrasted the average temperature (blue circles). With this visualizations the user can explore the slight temperature differences between the districts.
 In the third visualization, we included our secondary topic of interest, which is air quality. Here we contrasted the development of NOx levels and temperature.
 
-Below you can find a screenshot of one of the visualizations in our dashboard. To explore the full interactive dashboard, please follow the following link: [Tableau Public visualization] (https://public.tableau.com/views/TreesTreesTrees/Story1?:language=en-US&:display_count=n&:origin=viz_share_link "Tableau Public visualization") .
+Below you can find a screenshot of one of the visualizations in our dashboard. To explore the full interactive dashboard, please follow the following link: https://public.tableau.com/views/TreesTreesTrees/Story1 .
 
 ![Tableau Screenshot](../images/tableau_trees_total.png)  
 
