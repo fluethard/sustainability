@@ -32,13 +32,13 @@ To clarify our project goal and narrow it down we created the following drawing 
 
 ![Target Picture](../images/trees_vs_Pollution.png)  
 
-It shows two potential futures for Zürich. One with more green spaces and one with more urban wasteland. The idea of the project is to find out how much the trees and green spaces actually impact the city of Zürich in regard to temperature and air pollution. 
+The drawing depicts two potential futures for Zurich. One with more green spaces, and one with more urban wasteland. The idea of the project is to find out how much the trees and green spaces actually impact the city of Zurich in regards to temperature and air pollution, as measured on a district level using open data from general-purpose measurement stations (i.e. the data collection was in no way geared towards our analysis.) 
 
 ## Scope & Limitations
-Our data sets are limited to the trees planted by garden and forestation services of the municipality of Zurich (Grün Stadt Zürich), and only include roadside and park trees. The effect of local de- or reforestation thus cannot be accounted for. Furthermore, temperature data was taken from roadside stations that could themselves potentially be located within heat islands. It also needs to be noted, that we did not take existing trees into account, but only looked at whether or not we could see a (lagged) correlation between newly planted trees and temperature development within the districts that our measurement stations were located in.
+Our data sets are limited to the trees planted by the garden services of the municipality of Zurich (Grün Stadt Zürich), and only include roadside and park trees. The effect of local de- or reforestation thus cannot be accounted for. Furthermore, temperature data was taken from roadside stations that could themselves potentially be located within heat islands. It also needs to be noted, that we did not take existing trees into account, but only looked at whether or not we could see a (lagged) correlation between newly planted trees and temperature development within the districts that our measurement stations were located in.
 Furthermore, as our analysis moves beyond a micro-scale, there are many more factors that we cannot control for, both on the local and macro-environmental level.
 A factor that we did not control for, which could have large implications on the macro scale of temperature, is the potential disappearance of undeveloped land and urban expansion. Additionally, an analysis of building materials used was also out of the scope of this analysis.
-The temporal scope of our data is limited to the span between 1983 and 2022.
+The temporal scope of our data is limited to the time span between 1983 and 2022.
 To visualize the scope of our project, we have created a systems view that can be seen below.
 
 ![Systems View](../images/loopy.gif)
