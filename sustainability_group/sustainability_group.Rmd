@@ -20,7 +20,9 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
 \
 
-# TREES  -  TREES  -  TREES
+# Trees, Trees, Trees - Examining the meso- to macro-scale effects of vegetative cooling and air quality in the city of Zurich
+
+
 
 ## Introduction
 Vegetative cooling, or using plants to shield urban environments from the sun’s radiation, has been somewhat of a hot topic in recent years. There has been plenty of research done in the field of vegetative cooling for cities, such as, e.g. a 2021 Europe-wide study by Schwaab et al. (https://www.nature.com/articles/s41467-021-26768-w), or a simulation done on potential cooling effects of trees on Zurich’s Münsterhof by Kubilay et al. (https://www.mdpi.com/2073-4433/11/12/1313 ). Both of these studies find that urban trees do have at least a local cooling effect, not only due to the shade that the trees provide, but also due to other factors such as different evaporation or cool air flows as compared to asphalt or concrete surfaces.
