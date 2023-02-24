@@ -32,18 +32,18 @@ Our working hypothesis was that we can observe the cooling effects of trees on a
 While there are a number of potential factors on the local, regional, and even global scale that could have a significant influence on the local climate, this project focuses on local (i.e. on the city district level) data from the city of Zurich in regards to air quality, temperature information and the tree inventory. Further factors are described using sources, but are not included in the data analysis.
 To clarify our project goal and narrow it down we created the following drawing during an ideation session: 
 
-![Figure 1: Target Picture](../images/trees_vs_Pollution.png){width=50%}  
+![Figure 1: Target picture](../images/trees_vs_Pollution.png){width=50%}  
 
 The drawing depicts two potential futures for Zurich. One with more green spaces, and one with more urban wasteland. The idea of the project is to find out how much the trees and green spaces actually impact the city of Zurich in regards to temperature and air pollution, as measured on a district level using open data from general-purpose measurement stations (i.e. the data collection was in no way geared towards our analysis.) 
 
-## Scope & Limitations
+## Scope and limitations
 Our data sets are limited to the trees planted by the garden services of the municipality of Zurich (Grün Stadt Zürich), and only include roadside and park trees. The effect of local de- or reforestation thus cannot be accounted for. Furthermore, temperature data was taken from roadside stations that could themselves potentially be located within heat islands. It also needs to be noted, that we did not take existing trees into account, but only looked at whether or not we could see a (lagged) correlation between newly planted trees and temperature development within the districts that our measurement stations were located in.
 Furthermore, as our analysis moves beyond a micro-scale, there are many more factors that we cannot control for, both on the local and macro-environmental level.
 A factor that we did not control for, which could have large implications on the macro scale of temperature, is the potential disappearance of undeveloped land and urban expansion. Additionally, an analysis of building materials used was also out of the scope of this analysis.
 The temporal scope of our data is limited to the time span between 1983 and 2022.
 To visualize the scope of our project, we have created a systems view that can be seen below.
 
-![Figure 2: Systems View](../images/loopy.gif)
+![Figure 2: Systems view](../images/loopy.gif)
 
 ### Stakeholders
 To ensure we include all potential stakeholders in our project at the appropriate level we created the following stakeholder map: 
@@ -53,10 +53,13 @@ To ensure we include all potential stakeholders in our project at the appropriat
 
 We sorted them into three possible categories: "direct", "indirect", "unintended". Our main target is to work together with Grün Stadt Zürich and convince politicians, the government, and urban planners on the benefits of a greener city. Indirectly involved would be municipal workers such as street sweepers, who have to deal with more leaves on the ground on the streets, and tree nurseries, which would be relied upon to provide the trees. The stakeholder map lists further stakeholders who need to be considered if the proposed changes would be implemented. It is also very possible and even likely that additional stakeholders will have to be considered during the project. 
 
+# Context and data
 
-## Big Picture: Embedding in the Sustainable Development Goals (SDG)
-The SDGs lay out the goals that the global community (United Nations General Assembly in 2015) has agreed on. In total there are 17 goals and they range from 1. "No poverty" to 17. "Partnerships for the goals" and include social, economic and environmental targets. For our research we have identified the relevant goals and put them into the three different categories: Risk, Opportunity and Intended. 
+## Big picture: embedding in the Sustainable Development Goals (SDG)
+The SDGs lay out the goals that the global community (United Nations General Assembly in 2015) has agreed on. In total there are 17 goals and they range from 1. "No poverty" to 17. "Partnerships for the goals" and include social, economic and environmental targets. For our research we have identified the relevant goals and put them into the three different categories: Risk, Opportunity and Intended.
+
 ![Figure 4: Sustainable Development Goals](../images/sdg.png)
+
 As can be seen, the intended target for our research is to help achieve goal number 3, "Good health and well-being". This can be achieved if we can prove a correlation between the amount of trees in a district and an improvement in air quality, which could then lead to the increase of planting of new trees in Zurich as well as a reduction of concrete wastelands in favor of green spaces. This will result in more shade and less heat islands and will, among other things, improve the quality of life of all people reacting sensitively to high temperatures.
 There are a number of opportunities as well in regards to climate action, economic growth, and affordable and clean energy. There are only limited risks that this project has. However it is imaginable that the improvement in air quality in certain areas could lead to a increase in inequalities between more and less affluent communities, the former of which could afford to move to the greener areas. It is our conviction that it is important to always be responsible and think of possible negative externalities and unintended consequences while planning for new green zones and planting new trees.
 
@@ -224,7 +227,6 @@ air.NOx <- air.short[keep]
 
 # Data insights
 
-\
 
 To gain insights from the available information we have created a number of graphical overviews. These already show preliminary results of our analysis.
 
@@ -273,8 +275,7 @@ https://www.stadt-zuerich.ch/ted/de/index/departement/medien/medienmitteilungen/
 ## Remark on trees on private property    
 
 The City of Zurich is continuously planting trees on public ground as the awareness that trees are an effective measure to reduce heat in the city has become a common understanding. But if we broaden our view and also take private property into consideration, we get a different picture. 
-Half of the area of the tree crowns is on private ground and those are disappearing in such a pace that the overall population of trees is decreasing as well.   
-(https://www.tagesanzeiger.ch/die-stadt-will-ihre-krone-vergroessern-362720147046)
+Half of the area of the tree crowns is on private ground and those are disappearing in such a pace that the overall population of trees is decreasing as well. (https://www.tagesanzeiger.ch/die-stadt-will-ihre-krone-vergroessern-362720147046)
 
 \
 
@@ -494,7 +495,7 @@ plot(subset(air.means, Parameter == "SO2",
 
 \  
 
-### Difference of Nitrogen Oxides per measuring station
+### Difference of nitrogen oxides per measuring station
 
 \
 
@@ -585,7 +586,7 @@ plot(temp_d2d12, main = "Temperature without trend and seasonality")
 Generally, we can see that the temperature is slightly rising over time. There is a slight upwards trend noticeable and it is also important to remember how dangerous a temperature increase of just one percent can be for the biodiversity. 
 \
 
-```{r time_air, echo=TRUE,fig.show="hold", out.width="50%", fig.cap = "Fig. 11: Air Quality timeseries"}
+```{r time_air, echo=TRUE,fig.show="hold", out.width="50%", fig.cap = "Fig. 11: Air quality timeseries"}
 
 air.short %<>% complete(Date=seq.Date(min(Date), max(Date), by='day'))
 
@@ -689,7 +690,7 @@ Now one can see the correlation between the sum of trees and air quality (CO and
 
 \
 
-# Tableau Dashboard
+# Tableau dashboard
 
 \
 
@@ -908,4 +909,4 @@ Thirdly, to end on a positive note, there has been a clear improvement in variou
 While we did manage to get some very insightful and interesting results, we did also come across some issues, mostly with the data availability and quality. It would be useful to collect more data from the different districts in Zurich. It would also be helpful if that data would be completely available across a time-frame of at least 20 years. This would allow for creating a more complete picture and better comparisons among districts. Another possibility would be take a closer look at some of the outliers using Extreme Value Theory (EVT). A further approach would be to create a simulation. While this would obviously involve a lot more effort, it would allow to simulate potential scenarios and could thus help city planners and politicians make more informed policy decisions.  
 Additionally, further research questions could evaluate the temperature on both a micro and macro scale. Especially interesting would be an evaluation to calculate or simulate the amount of trees that would need to be planted to reach a tipping point that makes the efforts observable on a macro level.  In our opinion, it would be useful to not only include trees, as our research did, but also plants on facades and rooftops. Furthermore, the study should be controlled against the disappearance of undeveloped land in favour of urban spread.
 
-
+\
