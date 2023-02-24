@@ -16,7 +16,7 @@ Fabian Lüthard, Elisabeth Freimann, Simon Kohler (Group 3)
 - pdf and pptx of presentation on 10.02.2023
 
 **Folder sustainability_group**
-- sustainability_group.html: main result of group work
+- ${\color{red}sustainability\ group.html:\ final\ document\ of\ group\ work}$
 - sustainability_group.Rmd: contains additional source code, as not all is displayed in the .html document
 - folder Archiv: archived documents
 
